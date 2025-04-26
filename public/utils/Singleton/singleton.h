@@ -1,19 +1,20 @@
-﻿#ifndef _PSS_singleton_H_
-#define _PSS_singleton_H_
+﻿#ifndef _SINGLETON_H_
+#define _SINGLETON_H_
+
 #include <new>
 #include <memory>
 #include <functional>
 
 // CLASS TEMPLATE PSS_singleton forward decl
 template<typename _Ty, bool delayed = false>
-class HDRTSingleton;
+class Singleton;
 
 /// CLASS TEMPLATE PSS_singleton
 /// the managed PSS_singleton object will be destructed after main function.
 template<typename _Ty>
-class HDRTSingleton<_Ty, false>
+class Singleton<_Ty, false>
 {
-    typedef HDRTSingleton<_Ty, false> _Myt;
+    typedef Singleton<_Ty, false> _Myt;
     typedef _Ty* pointer;
 public:
     template<typename ..._Args>
@@ -37,15 +38,15 @@ public:
 private:
     static std::unique_ptr<_Ty> __single__;
 private:
-    HDRTSingleton(void) = delete; // just disable construct, assign operation, copy construct also not allowed.
+    Singleton(void) = delete; // just disable construct, assign operation, copy construct also not allowed.
 };
 
 /// CLASS TEMPLATE PSS_singleton, support delay init with variadic args
 /// the managed PSS_singleton object will be destructed after main function.
 template<typename _Ty>
-class HDRTSingleton<_Ty, true>
+class Singleton<_Ty, true>
 {
-    typedef HDRTSingleton<_Ty, true> _Myt;
+    typedef Singleton<_Ty, true> _Myt;
     typedef _Ty* pointer;
 public:
     template<typename ..._Args>
@@ -100,19 +101,19 @@ private:
 private:
     static std::unique_ptr<_Ty> __single__;
 private:
-    HDRTSingleton(void) = delete; // just disable construct, assign operation, copy construct also not allowed.
+    Singleton(void) = delete; // just disable construct, assign operation, copy construct also not allowed.
 };
 
 template<typename _Ty>
-std::unique_ptr<_Ty> HDRTSingleton<_Ty, false>::__single__;
+std::unique_ptr<_Ty> Singleton<_Ty, false>::__single__;
 
 template<typename _Ty>
-std::unique_ptr<_Ty> HDRTSingleton<_Ty, true>::__single__;
+std::unique_ptr<_Ty> Singleton<_Ty, true>::__single__;
 
 // TEMPLATE alias
 template<typename _Ty>
-using delayed = HDRTSingleton < _Ty, true >;
+using delayed = Singleton< _Ty, true >;
 
-#endif
+#endif // _SINGLETON_H_
 
 

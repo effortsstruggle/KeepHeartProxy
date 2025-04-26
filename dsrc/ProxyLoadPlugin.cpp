@@ -1,21 +1,19 @@
-#include "LoadPlugin.h"
-#include <dlfcn.h> // åŠ¨æ€é“¾æ¥åº“ç›¸å…³å¤´æ–‡ä»?
+#include "ProxyLoadPlugin.h"
+#include <dlfcn.h> // åŠ¨æ€é“¾æ¥åº“
 #include <dirent.h>
 #include <cstring>
-
-#include <stdio.h>
 #include <string.h>
 #include <vector>
 #include <map>
-#include "PluginInterface.h"
-#include "skylog.h"
 #include <thread>
 #include <sys/types.h> 
 #include <unistd.h>
+#include "PluginInterface.h"
+
 extern "C"
 {
 static std::vector<PluginInterface*> plugins; // åˆ›å»ºå‡ºçš„æ’ä»¶å®ä¾‹
-static std::vector<void*>  pluginHandles;     // åŠ è½½çš„æ’ä»¶åº“çš„å¥æŸ?,å¸è½½æ—¶ä½¿ç”?
+static std::vector<void*>  pluginHandles;     // åŠ è½½çš„æ’ä»¶åº“çš„å¥ï¿½?,å¸è½½æ—¶ä½¿ï¿½?
 static std::map<std::string,int>   name_id;             // æ’ä»¶åå¯¹åº”çš„ID
 
 static int plugin_count = 1;                       
@@ -24,7 +22,7 @@ typedef PluginInterface* (*CreatePluginFunc)();
 
 int LoadPlugnins()
 {
-    std::cout << "Loading Plugnins from \"/apps/plugins\" ..." << std::endl;
+    std::cout << "Loading Plugnins from  /apps/plugins " << std::endl;
     std::string path = "/apps/plugins"; // æ’ä»¶ç›®å½•
     DIR *dir = opendir(path.c_str());
     if (dir == nullptr) {
@@ -47,7 +45,7 @@ int LoadPlugnins()
                 plginspath.emplace_back(fname);
 
            
-            SKYLOGD("Founded plugins: %s", entry->d_name);
+            std::cout << "Founded plugins:  " <<  entry->d_name << std::endl ;
         }
     }
     closedir(dir);
@@ -56,12 +54,9 @@ int LoadPlugnins()
     plugins.resize(plginspath.size()+2);
     pluginHandles.resize(plginspath.size()+2);
 
-  //  std::cout << "222222222222" << plginspath.size() <<  std::endl;
     for(auto iter:plginspath) {
         int res = LoadPlugin(path + "/" + iter);
     }
-
- //   std::cout << "load over " <<  std::endl;
     return 0;
 }
 
@@ -71,25 +66,26 @@ int LoadPlugin(std::string const & path) {
     void* pluginHandle = dlopen(path.c_str(),RTLD_LAZY) ;//(path.c_str(),RTLD_LAZY);//("./plugins/libplug1.so", RTLD_LAZY);
     if (!pluginHandle) {
         
-        SKYLOGD( "Failed  load plugin:  %s ,dlerror:%s " ,path.c_str(),dlerror());
+        std::cout << "Failed  load plugin: " << path.c_str() <<" ,dlerror: " << dlerror() ;
         return -1;
     }
 
     //
     CreatePluginFunc createPlugin = reinterpret_cast<CreatePluginFunc>(dlsym(pluginHandle, "createPlugin"));
     if (!createPlugin) {
-        SKYLOGD( "Failed to  get function createplugin : %s" ,dlerror());
+        std::cout << "Failed to  get function createplugin : " << dlerror() << std::endl;
         dlclose(pluginHandle);
         return -1;
     }
-    // »ñÈ¡²å¼ş¾ä±ú
+
     PluginInterface* plugin = createPlugin();
-    if(!plugin){
-        SKYLOGD("ERROR   create Plugin :%s  FAILED",path.c_str());
+    if(!plugin)
+    {
+        std::cout << "ERROR   create Plugin: " << path.c_str() << std::endl;
         return -1;
     }
 
-    SKYLOGD("createPlugin : path %s ",path.c_str());
+    std::cout <<  "createPlugin path : " << path.c_str() << std::endl;
     std::string pname = plugin->GetPluginName();
     
     plugins[plugin_count] = plugin;
@@ -98,8 +94,7 @@ int LoadPlugin(std::string const & path) {
 
     name_id[pname] =plugin_count;
     plugin->setPid(plugin_count);
-  //  std::cout << "loaded plugins : " << pname << ",plugins id:" << plugin_count << std::endl;
-    LOGD("LoadPlugin-plugin name %s,plugins id:",pname,plugin_count);
+ 
     ++plugin_count;
     return plugin_count;
 }
@@ -111,13 +106,13 @@ rtn_int getPluginByName(std::string name)
     if(name_id.count(name) >0)
         return name_id[name];
 
-    SKYLOGD("ERROR requset[ %s ] unkonw plugin name ,maybe load faild or spelling error",name.c_str());
+    std::cout << "ERROR requset unkonw plugin name ,maybe load faild or spelling error" << name.c_str() << std::endl;
     return -1;  
 }
- /**
-  * Ö´ĞĞ²å¼ş
-  * ÕÒµ½¶ÔÓ¦²å¼ş£¬µ÷ÓÃÆäÖ´ĞĞ½Ó¿Ú
-  */
+
+/**
+*
+*/
 rtn_int  executeFunction(int plugID,int key, std::string const& data )
 {
     if(plugin_count > plugID  && plugID > 0)
@@ -139,7 +134,7 @@ rtn_int  executeFunctionEx(int plugID,int key, std::string const & data ,double 
 
 
 /**
- * ÊÍ·Å²å¼ş
+ * 
  */
 int  closePlugin(int pid)
  {
@@ -153,7 +148,7 @@ int  closePlugin(int pid)
     
     destroyPlugin(plugins[pid]);
 
-    //¹Ø±Õ²å¼ş¾ä±ú
+    //
     dlclose(pluginHandles[pid]);
 
     return 0;
@@ -163,8 +158,8 @@ int  closePlugin(int pid)
 void addMonitor(const CallBackFuncType & cb )
 {
     for(auto & iter:plugins){
-        if(iter){
-            //std::cout << iter->GetPluginName() << std::endl;
+        if(iter)
+        {
             iter->registerLisnter(cb);
         }
             
@@ -174,8 +169,8 @@ void addMonitor(const CallBackFuncType & cb )
 void addMonitorEx(const CallBackFuncIIIS & cb )
 {
     for(auto & iter:plugins){
-        if(iter){
-           // std::cout << iter->GetPluginName() << std::endl;
+        if(iter)
+        {
             iter->registerLisnter(cb);
         }
            
