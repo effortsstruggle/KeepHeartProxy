@@ -1,0 +1,82 @@
+
+收音机使用说明
+1、将.so 放在/apps/plugins 目录下
+
+2、在qml 中先获取插件的id ，然后通过ID 调用函数执行
+
+    插件名字在写在库中
+	
+    // 获取插件ID
+    function skyProxyGetPluginName(name)
+    {
+       return  JS.skyProxyGetPluginName(name)
+    }
+
+3、函数执行
+    1、data 数据都是字符类型,这都是基础类型调用方式(int ,float)
+    
+    2、复杂的多参数使用json 来传递，这个里边用不到
+    3、设置和获取数据通国枚举值来实现，返回值为int
+    4、更复杂的返回值或异步操作，将通过回调来通知
+    function skyProxyPluginsExecute ( dllid, key, data)
+    {
+        return JS.skyProxyPluginsExecute(dllid, key, data)
+    }
+
+
+3、qml 调用示例 具体参数含义参见枚举值定义
+	
+	打开
+	Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_SET_START,0)
+	
+	
+	Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_GET_STATUS,0)
+                
+	Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_SET_SEEK,1)
+
+
+    Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_SET_SEEK_STOP,0)
+
+	Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_SET_MUTE,1)
+
+	res = Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_GET_MUTE,0)
+
+
+	Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_SET_TUNE,9270)
+	res =  Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_GET_TUNE,0)
+
+
+	Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_SET_VOLUME,10)
+
+	res =  Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_GET_VOLUME,0)
+
+
+	Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_SET_MODE,1)
+
+	res =  Data.Values.skyProxyPluginsExecute(Data.Values.pluginFm_id,MCU_DATA_INDEX.RD_GET_MODE,0)
+
+
+
+4、qml 中响应回示例
+    先绑定代理的回调  SkyProxy.onSkyPluginsNotify.connect(sky_plugins_notify)
+    // pid 线程id；code 消息码；str 回调消息数据
+    function sky_plugins_notify( pid, code,str)
+    {
+        if(pid === values.pluginFm_id)
+        {
+            switch(code)
+            {
+            case  MCU_DATA_INDEX.RD_NOTIFY_SEEK_OVER:       // 搜台结束回调通知
+                console.log("RD_NOTIFY_SEEK_OVER",str)
+                break;
+            case  MCU_DATA_INDEX.RD_NOTIFY_SEEK_CUR_FREQ:         // 搜台当前频率
+                //console.log("RD_NOTIFY_SEEK_CUR_FREQ",str)
+                break;
+            case MCU_DATA_INDEX.RD_NOTIFY_SEEK_GOOD_FREQ:       // 搜台搜到的OK的频率:
+                console.log("RD_NOTIFY_SEEK_GOOD_FREQ",str)
+                break;
+            }
+
+            console.log()
+        }
+    }
