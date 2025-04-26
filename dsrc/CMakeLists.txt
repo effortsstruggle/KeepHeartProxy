@@ -7,7 +7,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_PREFIX_PATH "/opt/T5_Qt_5.15.8_Release/")
+set(CMAKE_PREFIX_PATH "/home/qin/qt5.15.2/")
 find_package(QT NAMES  Qt5 REQUIRED COMPONENTS  Core Qml Quick )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS  Core Qml Quick )
 
@@ -42,9 +42,7 @@ add_library("${LIB_NAME}"  SHARED   ${SRC})
 
 
 target_link_libraries(${LIB_NAME} Qt5::Core  Qt5::Qml Qt5::Quick)
-target_link_libraries(${LIB_NAME} -llog -lcarbitUtil -lsqlite3 pthread -lsky_ipc -lmcu -lcjson "libdvrapi.a" "libmplayerapi.a")
-target_link_libraries(${LIB_NAME} "/opt/t5sdk/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libz.so.1")
-
+target_link_libraries(${LIB_NAME} -lpthread -lcjson )
 set (SKYPROXY_SO "${CMAKE_BINARY_DIR}/dsrc/lib${LIB_NAME}.so")
 
 if(PUSH_REMOTE)

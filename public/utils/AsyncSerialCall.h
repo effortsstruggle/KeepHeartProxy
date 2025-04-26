@@ -51,11 +51,11 @@ public:
 // test 函数添加
     void AddFunctionToQueue(FuncAndParam const & fp);
     
-    
+private:
+    void delayedExecution(); 
 private:
     std::string logtag;
-    void delayedExecution();
-    void mLOGD(const char *fmt, ...);
+
     std::mutex cmvtx;  // 创建一个互斥锁
     std::condition_variable cv;
     std::queue<FuncAndParam>  pFmFuncArr ; //函数数组

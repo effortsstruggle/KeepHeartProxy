@@ -1,6 +1,4 @@
 
-include(/opt/t5sdk/t5sdk.cmake)
-
 function(push_to_target )
     if( ${PUSH_REMOTE} EQUAL 1)
         add_custom_command(TARGET "${LIB_NAME}" POST_BUILD
