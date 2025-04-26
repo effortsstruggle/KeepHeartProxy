@@ -9,6 +9,6 @@ function(push_to_target )
 endfunction()
 
 add_subdirectory(utils)
-# add_subdirectory(cjson)
-# add_subdirectory(mcu_comm_lib)
+add_subdirectory(cjson)
+add_subdirectory(parse)
 

@@ -20,6 +20,7 @@
 #include <memory.h>
 
 #include <queue>
+
 static McuSerial _serial;
 static McuParser _parser;
 
