@@ -1,7 +1,8 @@
-#ifndef PLUGIN_INTERFACE_
-#define  PLUGIN_INTERFACE_
+#ifndef _PLUGIN_INTERFACE_
+#define _PLUGIN_INTERFACE_
 
 #include <functional>
+
 using CallBackFuncType = std::function<int(int, int,std::string)> ;
 using AsynCallBackFuncType = std::function<int(int, int,std::string)> ;
 
@@ -52,4 +53,4 @@ private:
     AsynCallBackFuncType m_pAsncBackCallFunc ;
 };
 
-#endif // DEBUG
+#endif // _PLUGIN_INTERFACE_
