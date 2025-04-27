@@ -36,15 +36,15 @@ public:
 
     Q_INVOKABLE int pluginsExecute(int dllid,int key,QString data);
 
-    Q_INVOKABLE int pluginsExecuteEx(int dllid,int key,QString data ,double p1 = 0,double p2= 0,double p3= 0,double p4= 0);
+    Q_INVOKABLE int pluginsExecuteAsync(int dllid,int key,QString data );
 
-    int onPluginNotify(int,int,std::string,double p1 = 0,double p2 = 0,double p3 = 0,double p4 = 0);
-    int onPluginNotifyEx(int,int,int,std::string);
+    int onPluginNotify(int,int,std::string);
+    int onPluginNotifyAsyn(int,int,std::string);
 
 signals:
 
-     void pluginsNotify(int pid,int code,QString data,double p1 = 0,double p2 = 0,double p3 = 0,double p4 = 0);
-     void pluginsNotifyEx(int pid,int code,int p1,QString data);
+     void pluginsNotify(int pid,int code,QString data);
+     void pluginsNotifyAsyn(int pid,int code,QString data);
 
 private:
 

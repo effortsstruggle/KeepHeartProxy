@@ -1,58 +1,61 @@
-/**
- *@brief: 导入目录下的插件,这个后边应该做成�?
- *@author: sky
- *@version 
-
- *@since 
- *@date: 2024-08-21 16:28:26
-*/
+#ifndef __PROXYLOADPLUGIN_H_
+#define __PROXYLOADPLUGIN_H_
 
 #include <functional>
+#include <Singleton/singleton.h>
 #include "PluginInterface.h"
-typedef int rtn_int;
- extern "C"
+#include <vector>
+#include <map>
+
+typedef PluginInterface* (*CreatePluginFunc)();
+
+class ProxyLoadPlugin 
 {
-    /**
-     *@brief: 自动导入加载目录下的插件
-     *@author: sky
-     *@date: 2024-08-20 15:27:33
+
+public:
+
+   ProxyLoadPlugin();
+   ~ProxyLoadPlugin();
+
+   /**
+   *@brief: load plugins
+   */
+   int LoadPlugnins( const std::string &path = "/home/qin/workspace/KeepHeartProxyDependsLib/plugins");
+   int LoadPlugin(std::string const & path);
+
+   /**
+    *@brief: exec plugin
+   */
+   int executeFunction(int plugId,int key,std::string const & data  = "");
+   int executeFunctionAsyn(int plugId,int key, std::string const & data  = "" );
+
+   /**
+    * @brief close plugin
     */
-    int LoadPlugnins();
+   int closePluginHandles();
+   int closePluginHandle(int pid);
 
-    /**
-     *@description: 
-     *@author: sky
-     *@param path[in] 加载路径下的 .so
-     *@return 
-        成功，返回id
-        不成功返�? -1
-     *@date: 2024-08-20 15:28:33
+   /**
+    * @brief add notify
     */
-    int LoadPlugin(std::string const & path);
+   void addMonitor(const CallBackFuncType & cb);
+   void addMonitorAsync(const AsynCallBackFuncType & cb );
 
-
-    int getPluginByName(std::string name);
-
-    /**
-     *@description: 
-     *@author: sky
-     *@param plufinID[in] 输入参数1
-     *@param key[in] 操作的枚举�?
-     *@param data[in/out] 操作的数�? 
-     *@param len[out] 输入数据的长�?
-     *@return 
-        -1 失败
-
-     *@date: 2024-08-20 15:36:33
+   /**
+    * @brief get plugin id
     */
-   rtn_int executeFunction(int plufinID,int key,std::string const & data  = "");
+   int getPluginByName(std::string name);
 
-   rtn_int executeFunctionEx(int plugID,int key, std::string const & data  = "",double p1 = 0,double p2= 0,double p3= 0,double p4= 0);
 
-    int  closePlugin(int pid);
-    
-    void addMonitor(const CallBackFuncType & cb);
-    void addMonitorEx(const CallBackFuncIIIS & cb );
-}
+private:
+   std::vector<PluginInterface*> m_vecPlugins; // 创建出的插件实例
+   std::vector<void*>  m_vecPluginHandles;     // 加载的插件库的句�?,卸载时使�?
+   std::map<std::string,int>  m_mapNameToId;             // 插件名对应的ID
+   int m_s32PluginCount;      
+};
+using Singleton_ProxyLoadPlugin = Singleton<ProxyLoadPlugin>;
+
+
  
+#endif // __PROXYLOADPLUGIN_H_
 
