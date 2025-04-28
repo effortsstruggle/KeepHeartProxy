@@ -33,12 +33,13 @@ struct NotifyParam
 struct FuncAndParam
 {
     
-    FuncAndParam(PFUNC fc = nullptr,double d1=0,double d2=0,double d3=0,double d4=0,std::string ptag = "null"):
-    pFunc(fc),p1(d1),p2(d2),p3(d3),p4(d4),tag(ptag){ 
+    FuncAndParam(PFUNC fc = nullptr, std::string data = "" , double d1=0,double d2=0,double d3=0,double d4=0,std::string ptag = "null"):
+    pFunc(fc),data(data),p1(d1),p2(d2),p3(d3),p4(d4),tag(ptag){ 
        };
 
 
     PFUNC pFunc;
+    std::string data ; 
     double p1;    // 每个函数的参数
     double p2;    // 在这里用作延迟时间
     double p3;    // 在这里用作延迟时间

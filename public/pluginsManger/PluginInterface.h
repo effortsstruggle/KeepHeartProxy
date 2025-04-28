@@ -13,8 +13,7 @@ public:
     /**
      *@description: interface call
     */
-    virtual int execute(int key,std::string const &data) {return 0;};
-    virtual int executeEx(int key,std::string const &data = "",double p1 = 0,double p2 = 0, double p3 = 0,double p4 = 0)= 0;
+    virtual int execute(int key,std::string const &data = "") = 0;
     virtual int executeAsync(int key,std::string const &data = "") = 0 ;
     
     /**
