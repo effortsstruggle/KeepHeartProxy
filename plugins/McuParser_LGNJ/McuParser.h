@@ -5,7 +5,7 @@
 #include <list>
 #include <string>
 #include <vector>
-#include "McuParserBase.h"
+#include "ParserBase.h"
 #include "McuData.h"
 #include "McuDef.h"
 
@@ -19,7 +19,7 @@ struct NotifyItem {
 
 using namespace std;
 
-class McuParser : public McuParserBase
+class McuParser : public ParserBase
 {
 public:
     McuParser();
@@ -75,7 +75,7 @@ protected:
     tagMCUShakeHandPacket m_objMcuShakeHandStatus;
     tagEngineStatusPacket m_objEngineStatus;
     tagACStatusPacket m_objAcStatus;
-    tagACStatusPacketEx m_objAcStatusEx; //空调状态扩展数�?
+    tagACStatusPacketEx m_objAcStatusEx; //空调状态扩展数�?
     tagElectricCtrlLiftingStatusPacket m_objElectricCtrlLiftingStatus ;
     tagHydraulicValveStatusPacket m_objHydraulicValveStatus ;
     tagGearboxStatusPacket m_objGearBoxStatus ;

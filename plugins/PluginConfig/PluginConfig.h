@@ -40,48 +40,51 @@ public:
     }
 
   
-  private:
-  
-    static int asyncInit(FuncAndParam const &param );
-    int init();
-    
-    /**
-     *@brief: 从json 中读取数据
-    */
-   static int asyncRead(FuncAndParam const &param );
-    int read(const char* id);
+protected:
 
-    /**
-     *@brief: 
-    */
+  static int asyncInit(FuncAndParam const &param );
+  NotifyParam init();
+
+  /**
+   *@brief: 从json 中读取数据
+  */
+  static int asyncRead(FuncAndParam const &param );
+  NotifyParam read(const char* id);
+
+  /**
+   *@brief: 
+  */
   static int asyncWrite(FuncAndParam const &param );
-  int write(const char* str);
+  NotifyParam write(const char* str);
 
-    /**
-     *@brief: 删除配置文件重置
-    */
-    static int asyncReset(FuncAndParam const &param );
-    int reset();
-
-
-
-    static int asyncClose(FuncAndParam const &param );
-    int close();
+  /**
+   *@brief: 删除配置文件重置
+  */
+  static int asyncReset(FuncAndParam const &param );
+  NotifyParam reset();
 
 
-    static int asyncGetJson(FuncAndParam const &param );
-    int getJson(const char* str);
-    
-    static int asyncGetAll(FuncAndParam const &param );
-    int getAll();
 
-    /**
-     *@brief: 写文件操作，同步到硬盘
-    */
-    int sync();
- 
+  static int asyncClose(FuncAndParam const &param );
+  NotifyParam close();
 
-    int fillEmptyRoot();
+
+  static int asyncGetJson(FuncAndParam const &param );
+  NotifyParam getJson(const char* str);
+
+  static int asyncGetAll(FuncAndParam const &param );
+  NotifyParam getAll();
+
+private:
+  /**
+   *@brief: 写文件操作，同步到硬盘
+  */
+  NotifyParam sync();
+
+
+  NotifyParam fillEmptyRoot();
+
+
 private:
     cJSON *m_pRootJson;
     AsyncCall *m_pAsyncCall ;

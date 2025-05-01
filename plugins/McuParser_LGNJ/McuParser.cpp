@@ -9,7 +9,6 @@
 
 #include <cJSON.h>
 
-#include "lgnj_log.h" 
 uint16_t mxc_crc16s_calc(const uint8_t *q, uint32_t len);
 
 pthread_mutex_t *g_pThread = NULL;

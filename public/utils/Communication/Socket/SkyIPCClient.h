@@ -16,7 +16,7 @@ public:
     void CloseClient();
 
 private:
-    static void *  threadRecv(void* args);
+    static void* threadRecv(void* args);
     Fun1char cbrecv;
     pthread_t t;
 };

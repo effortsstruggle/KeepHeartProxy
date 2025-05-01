@@ -20,11 +20,21 @@
 struct FuncAndParam;
 typedef int (*PFUNC)(FuncAndParam const &);
 
+
+enum NotifyErrorCode 
+{
+    eNullPointerError = 0x0000, 
+    eWriteFileError ,
+    eTypeError , 
+
+    eInvialdError = 0xFFFF ,
+};
+
 struct NotifyParam
 {
-    int m_s32Ret ; // -1 : error , 0 : correct 
-    std::string m_stCorrectInfo ; //correct info
-    std::string m_stErrorInfo; //error info
+    int m_s32Ret ; // -1 : error , 0 : success 
+    std::string m_stSuccessInfo ; 
+    NotifyErrorCode m_eErrorCode ;
 };
 
 

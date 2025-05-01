@@ -4,6 +4,7 @@
 #include <new>
 #include <memory>
 #include <functional>
+#include <mutex>
 
 // CLASS TEMPLATE PSS_singleton forward decl
 template<typename _Ty, bool delayed = false>
@@ -20,15 +21,20 @@ public:
     template<typename ..._Args>
     static pointer getInstance(_Args...args)
     {
-        if (nullptr == _Myt::__single__.get())
-        {
-            _Myt::__single__.reset(new(std::nothrow) _Ty(args...));
+        // 双重检查锁定
+        if (nullptr == _Myt::__single__.get()) {
+            std::lock_guard<std::mutex> lock(__mutex__);  // 加锁
+            if (nullptr == _Myt::__single__.get())
+            {
+                _Myt::__single__.reset(new(std::nothrow) _Ty(args...));
+            }
         }
         return _Myt::__single__.get();
     }
 
     static void destroy(void)
     {
+        std::lock_guard<std::mutex> lock(__mutex__);  // 加锁
         if (_Myt::__single__.get() != nullptr)
         {
             _Myt::__single__.reset();
@@ -37,6 +43,8 @@ public:
 
 private:
     static std::unique_ptr<_Ty> __single__;
+    // 新增：静态互斥锁
+    static std::mutex __mutex__;
 private:
     Singleton(void) = delete; // just disable construct, assign operation, copy construct also not allowed.
 };
@@ -52,9 +60,9 @@ public:
     template<typename ..._Args>
     static pointer getInstance(_Args...args)
     {
-        if (nullptr == _Myt::__single__.get())
-        {
-
+        // 双重检查锁定
+        if (nullptr == _Myt::__single__.get()) {
+            std::lock_guard<std::mutex> lock(__mutex__);  // 加锁
             if (nullptr == _Myt::__single__.get())
             {
                 _Myt::__single__.reset( new(std::nothrow) _Ty() );
@@ -67,6 +75,7 @@ public:
 
     static void destroy(void)
     {
+        std::lock_guard<std::mutex> lock(__mutex__);  // 加锁
         if (_Myt::__single__.get() != nullptr)
         {
             _Myt::__single__.reset();
@@ -100,12 +109,22 @@ private:
 
 private:
     static std::unique_ptr<_Ty> __single__;
+    // 新增：静态互斥锁
+    static std::mutex __mutex__;
 private:
     Singleton(void) = delete; // just disable construct, assign operation, copy construct also not allowed.
 };
 
+
+// 静态成员初始化
+template<typename _Ty>
+std::mutex Singleton<_Ty, false>::__mutex__;
+
 template<typename _Ty>
 std::unique_ptr<_Ty> Singleton<_Ty, false>::__single__;
+
+template<typename _Ty>
+std::mutex Singleton<_Ty, true>::__mutex__;
 
 template<typename _Ty>
 std::unique_ptr<_Ty> Singleton<_Ty, true>::__single__;

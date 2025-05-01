@@ -76,7 +76,7 @@ int SkyIPCServer::StartServer(unsigned int port)
     nSocktfd = ServerBuildSocket(DEFAULTPORT);
     if (nSocktfd < 0)
     {
-        TRACE("ServerBuildSocket faile.\n");
+        // TRACE("ServerBuildSocket faile.\n");
         return nSocktfd;
     }
 
@@ -107,12 +107,12 @@ int SkyIPCServer::StartServer(unsigned int port)
         nRet = select(nMaxSock + 1, &fdRead, NULL, NULL, &tv);
         if (nRet < 0)
         {
-            TRACE("select failed.\n");
+            // TRACE("select failed.\n");
             break;
         }
         else if(nRet == 0)
         {
-            TRACE("timeout.\n");
+            // TRACE("timeout.\n");
             continue;
         }
 
@@ -126,7 +126,7 @@ int SkyIPCServer::StartServer(unsigned int port)
                 nRet = recv(fd_A[i],szBuf,sizeof(szBuf),0);
                 if (nRet <= 0)
                 {
-                    TRACE("Client %d close\n",i);
+                    // TRACE("Client %d close\n",i);
                     close(fd_A[i]);
                     FD_CLR(fd_A[i],&fdRead);
                     fd_A[i] = 0;
@@ -151,7 +151,7 @@ int SkyIPCServer::StartServer(unsigned int port)
             nNewSocktfd = accept(nSocktfd, (struct sockaddr *)&client_addr,(socklen_t*)&nSockaddrLen);
             if (nNewSocktfd <= 0)
             {
-                TRACE("accept failed.\n");
+                // TRACE("accept failed.\n");
                 continue;
             }
             
@@ -175,7 +175,7 @@ int SkyIPCServer::StartServer(unsigned int port)
             }
             else
             {
-                TRACE("max connections arrive,exit\n");
+                // TRACE("max connections arrive,exit\n");
                 send(nNewSocktfd,"The link is full",16,0);
                 close(nNewSocktfd);
                 continue;
@@ -199,5 +199,7 @@ int SkyIPCServer::sendData(int fd,char * data,int len)
 {
     int res = send(fd,data,len,0);
     if(res < 0)
-        TRACE("SkyIPCServer send error : %d \n",res);
+    {
+        // TRACE("SkyIPCServer send error : %d \n",res);
+    }
 }

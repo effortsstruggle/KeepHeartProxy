@@ -60,10 +60,10 @@ void* SkyIPCClient::threadRecv(void* args)
         {
             break;
         }
-        TRACE("SkyIPCClient ConnectServer failed. ERROR:%d ,will Reconnect aften %d ms\n",nSockFd,Reconnection_Interval);
+        // TRACE("SkyIPCClient ConnectServer failed. ERROR:%d ,will Reconnect aften %d ms\n",nSockFd,Reconnection_Interval);
             sleep(Reconnection_Interval);
     }
-    TRACE("SkyIPCClient ConnectServer success. \n" );
+    // TRACE("SkyIPCClient ConnectServer success. \n" );
     char buf[512] ;
     SkyIPCClient* tt = (SkyIPCClient*)args;
     int res = 1;
@@ -73,7 +73,7 @@ void* SkyIPCClient::threadRecv(void* args)
         res = recv(nSockFd, buf, sizeof(buf), 0);
         if(res <= 0)
         {
-            TRACE("SkyIPCClient recv ERROR: %d",res);
+            // TRACE("SkyIPCClient recv ERROR: %d",res);
             goto ReConnect;
         }
         else
@@ -103,7 +103,7 @@ int SkyIPCClient::SendData(char * data,int len)
  //   TRACE("SkyIPCClient ConnectServer success.");
     int ret =send(nSockFd,data,len,0);
     if(ret <= 0){
-        TRACE("SkyIPCClient send failed. return: %d\n",ret);
+        // TRACE("SkyIPCClient send failed. return: %d\n",ret);
     }
 
     //这种方式发送会失败,原因？
@@ -119,7 +119,7 @@ int clienttest(){
     nSockFd = ConnectServer("127.0.0.1",DEFAULTPORT);
     if (nSockFd < 0)
     {
-        TRACE("ConnectServer failed.\n");
+        // TRACE("ConnectServer failed.\n");
         exit(0);
     }
 
@@ -128,7 +128,7 @@ int clienttest(){
         int ret = send(nSockFd,szBuf,strlen(szBuf),0);
         if(ret <= 0)
         {
-            TRACE("SkyIPCClient send failed.return: %d\n",ret);
+            // TRACE("SkyIPCClient send failed.return: %d\n",ret);
             exit(0);
         }
     }
