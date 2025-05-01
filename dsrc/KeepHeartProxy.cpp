@@ -1,8 +1,8 @@
 #include "KeepHeartProxy.h"
 #include <iostream>
 #include <map>
-#include <Log/Log.h>
 #include "ProxyLoadPlugin.h"
+#include "KeepHeartProxyLog.h"
 
 using namespace std::placeholders; 
 
@@ -40,13 +40,13 @@ Q_INVOKABLE int KeepHeartProxy::pluginsExecuteAsync(int dllid , int key , QStrin
  int KeepHeartProxy::onPluginNotify(int pid , int code , std::string data)
  {
     QString str = data.c_str();
-    emit pluginsNotify(pid , code , str );
+    emit pluginNotify(pid , code , str );
     return 0;
  }
 
  int KeepHeartProxy::onPluginNotifyAsyn(int pid , int code , std::string data)
  {
     QString str = data.c_str();
-    emit pluginsNotifyAsyn(pid , code , str);
+    emit pluginNotifyAsyn(pid , code , str);
     return 0;
  }

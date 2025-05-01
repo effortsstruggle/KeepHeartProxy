@@ -31,10 +31,10 @@ public:
      * key : enum 
      * data : json 
      */
-    int execute(int key,std::string const &data = "" );
-    int executeAsync(int key, std::string const &data = "" );
+    virtual int execute(int key,std::string const &data = "" ) override;
+    virtual int executeAsync(int key, std::string const &data = "" ) override ;
 
-    std::string GetPluginName()
+    virtual std::string GetPluginName() override 
     {
       return "PluginConfig";
     }

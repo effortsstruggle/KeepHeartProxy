@@ -54,15 +54,13 @@ include(cmake_modules/AutoGenVer.cmake)
 #打印构建信息
 color_out(3 "build for ${BUILD_FOR}; \nbuild type ${CMAKE_BUILD_TYPE}; \npush_remote ${PUSH_REMOTE} \ncopy to package ${COPY_TO} ")
 
-
 include_directories (
     "${PROJECT_SOURCE_DIR}/public/utils/"
     "${PROJECT_SOURCE_DIR}/public/pluginsManger/"
 )
 
-# message("SRC: ${SRC}")
 # 不需要编译的就注释，不参与编译
 add_subdirectory(public)
 add_subdirectory(plugins)
 add_subdirectory(dsrc)
-# add_subdirectory(test)
+add_subdirectory(test)

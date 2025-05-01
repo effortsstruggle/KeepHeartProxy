@@ -16,16 +16,12 @@ include_directories(
 link_directories(
    ${CMAKE_BINARY_DIR}/public/utils 
    ${CMAKE_BINARY_DIR}/public/cjson
-   )
+)
 
-file( GLOB_RECURSE SRC *.cpp *.c )
+file( GLOB SRC *.cpp *.c )
 
 # 编译生成共享库
 add_library("${LIB_NAME}"  SHARED   ${SRC})
 target_link_libraries(${LIB_NAME} -lpthread -lcjson -lutils)
 
-
 push_to_target()
-
-
-

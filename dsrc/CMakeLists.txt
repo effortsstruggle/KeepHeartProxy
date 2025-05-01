@@ -1,11 +1,9 @@
-
-
-
+cmake_minimum_required(VERSION 3.0.0)
 
 set(LIB_NAME "KeepHeartProxy")
 set(LIB_DIR "dsrc")
 
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -18,12 +16,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS  Core Qml Quick )
 
 # # 头文件
 include_directories (
-  "./" 
   ${PROJECT_SOURCE_DIR}/public/pluginsManger
   ${PROJECT_SOURCE_DIR}/public/utils
 )
 
-file(GLOB_RECURSE SRC  ./*.cpp ./*.c )
+file( GLOB SRC *.cpp *.c )
 
 # 库目录
 link_directories(

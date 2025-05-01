@@ -106,7 +106,7 @@ int ProxyLoadPlugin::LoadPlugin(std::string const & path) {
 
 int ProxyLoadPlugin::executeFunction(int plugID,int key, std::string const& data )
 {
-    if(this->m_s32PluginCount > plugID  && plugID > 0)
+    if(this->m_s32PluginCount > plugID  && plugID >= 0)
         return  this->m_vecPlugins[plugID]->execute(key, data);
     else
         std::cerr << "execute unknow plugin id  " << plugID  << std::endl;
@@ -115,7 +115,7 @@ int ProxyLoadPlugin::executeFunction(int plugID,int key, std::string const& data
 
 int  ProxyLoadPlugin::executeFunctionAsyn(int plugID,int key, std::string const & data )
 {
-   if( this->m_s32PluginCount > plugID  && plugID > 0)
+   if( this->m_s32PluginCount > plugID  && plugID >= 0)
         return  this->m_vecPlugins[plugID]->executeAsync( key,data );
     else
         std::cerr << "executeEx unknow plugin id  " << plugID  << std::endl;
