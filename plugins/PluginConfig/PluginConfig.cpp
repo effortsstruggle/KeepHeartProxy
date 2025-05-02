@@ -39,129 +39,174 @@ PluginConfig::~PluginConfig()
 
 int PluginConfig::execute(int key,std::string const &data)
 {
-    int val = 0;
-    int ret = 0;
+
+    NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    std::string stNotifyJson = "" ;
+    cJSON *pRoot = nullptr ;
+    std::string stData = nullptr ;
+
+
+    //解析Json串
+    pRoot = cJSON_Parse( data.c_str() ); // 解析 JSON 字符串
+    if ( nullptr == pRoot ) 
+    {
+        std::cout << "PluginConfig::execute() pRoot is nullptr" << std::endl;
+        return -1 ;
+    }
+
+    cJSON *pDataJson = cJSON_GetObjectItem(pRoot, "data1");
+    if( nullptr == pDataJson )
+    {
+        cJSON_Delete( pRoot );
+        std::cout << "PluginConfig::execute() pDataJson is nullptr" << std::endl;
+        return -1 ;
+    }
+
+    if ( cJSON_IsString( pDataJson ) ) 
+    {
+        stData = pDataJson->valuestring;    
+    }
+    else
+    {
+        cJSON_Delete( pRoot );
+        std::cout << "PluginConfig::execute() type is error" << std::endl;
+        return -1 ;
+    }
+
+
+    cJSON_Delete( pRoot ); 
+
     
+
     switch (key)
     {
         case CFG_INIT:
-            this->init();
+            objNotifyParam = this->init();
             break;
         case CFG_CLOSE:
-            this->close();
+            objNotifyParam = this->close();
             break;     
         case CFG_READ:
-            this->read( data.c_str() );
+            objNotifyParam = this->read( stData.c_str() );
             break;
         case CFG_WRITE:
-            this->write( data.c_str() );
+            objNotifyParam = this->write( stData.c_str() );
             break;   
         case CFG_RESET:
-            this->reset();
+            objNotifyParam = this->reset();
             break; 
         case CFG_READ_JSON:
-            this->getJson( data.c_str() ) ;
+            objNotifyParam = this->getJson( stData.c_str() ) ;
             break;
         case CFG_READ_JSON_ALL:
-            this->getAll();
+            objNotifyParam = this->getAll();
             break;
         default:
         
         break;
     }
-   
-    return ret;
+
+    stNotifyJson = this->makeNotifyJson( objNotifyParam );
+    this->Notify( key , stNotifyJson );
+
+    return objNotifyParam.m_s32Ret ; 
 }
 
-int PluginConfig::executeAsync( int key,std::string const &data ){
+int PluginConfig::executeAsync( int key,std::string const &data )
+{
 
-    int val = 0;
-    int res = 0;
-    
+
+    std::cout << "PluginConfig::executeAsync ---> : " << data << std::endl;
+
+    NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError } ; 
+    std::string stNotifyJson = "" ;
+    cJSON *pRoot = nullptr ;
+    std::string stData = "" ;
+
+    //解析Json串
+    pRoot = cJSON_Parse( data.c_str() ); // 解析 JSON 字符串
+    if ( nullptr == pRoot ) 
+    {
+        std::cout << "PluginConfig::executeAsync() pRoot is nullptr" << std::endl;
+        return -1 ;
+    }
+
+    cJSON *pDataJson = cJSON_GetObjectItem(pRoot, "data1");
+    if( nullptr == pDataJson )
+    {
+        cJSON_Delete( pRoot );
+        std::cout << "PluginConfig::executeAsync() pDataJson is nullptr" << std::endl;
+        return -1 ;
+    }
+
+    if ( cJSON_IsString( pDataJson ) ) 
+    {
+        stData = pDataJson->valuestring;    
+    }
+    else
+    {
+        cJSON_Delete( pRoot );
+        std::cout << "PluginConfig::executeAsync() type is error" << std::endl;
+        return -1 ;
+    }
+
+
+    cJSON_Delete( pRoot ); 
+
+
     switch (key)
     {
-        case CFG_INIT:
-            this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncInit , "" , 0 , 0 , 0 , 0 , "cfg_init")  );
-            break;
-        case CFG_CLOSE:
-            this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncClose , "" , 0 , 0 , 0 , 0 , "cfg_close") );
-            break;     
-        case CFG_READ:
-            this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncRead , data , 0 , 0 , 0 , 0 , "cfg_read") );
-            break;
-        case CFG_WRITE:
-            this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncWrite , data , 0 , 0 , 0 , 0 , "cfg_write") );
-            break;   
-        case CFG_RESET:
-            this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncReset , "" , 0 , 0 , 0 , 0 , "cfg_reset") );
-            break; 
-        case CFG_READ_JSON:
-            this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncGetJson , data , 0 , 0 , 0 , 0 , "cfg_getjson") );
-            break;
-        case CFG_READ_JSON_ALL:
-            this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncGetAll , "" , 0 , 0 , 0 , 0 , "cfg_getall") );
-            break;
+    case CFG_INIT:
+        this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncInit , "" , 0 , 0 , 0 , 0 , "cfg_init")  );
+        break;
+    case CFG_CLOSE:
+        this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncClose , "" , 0 , 0 , 0 , 0 , "cfg_close") );
+        break;     
+    case CFG_READ:
+        this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncRead , stData , 0 , 0 , 0 , 0 , "cfg_read") );
+        break;
+    case CFG_WRITE:
+        this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncWrite , stData , 0 , 0 , 0 , 0 , "cfg_write") );
+        break;   
+    case CFG_RESET:
+        this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncReset , "" , 0 , 0 , 0 , 0 , "cfg_reset") );
+        break; 
+    case CFG_READ_JSON:
+        this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncGetJson , stData , 0 , 0 , 0 , 0 , "cfg_getjson") );
+        break;
+    case CFG_READ_JSON_ALL:
+        this->m_pAsyncCall->AddFunctionToQueue( FuncAndParam( PluginConfig::asyncGetAll , "" , 0 , 0 , 0 , 0 , "cfg_getall") );
+        break;
     default:
         break;
     }
-   
-    return res;
- };
+
+    return objNotifyParam.m_s32Ret ;
+ }
 
 
 int PluginConfig::asyncInit( FuncAndParam const &param )
 {
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
-
-    cJSON *pNotifyJson = nullptr ;
-    char *pJson = nullptr ;
-    
-    pNotifyJson = cJSON_CreateObject();
-    if ( nullptr == pNotifyJson ) 
-    {
-        std::cout << " PluginConfig::asyncInit() cJSON_CreateObject is fail" << std::endl;
-        return -1;
-    }
+    std::string stNotifyJson = "" ;
 
     // init
     objNotifyParam = Singleton_PluginConfig::getInstance()->init();
 
-    cJSON_AddNumberToObject(pNotifyJson, "result", objNotifyParam.m_s32Ret);
-    cJSON_AddStringToObject(pNotifyJson, "sucess_notify", objNotifyParam.m_stSuccessInfo.c_str());
-    cJSON_AddNumberToObject(pNotifyJson, "error_notify", objNotifyParam.m_eErrorCode);
-    pJson = cJSON_Print(pNotifyJson);
-    if (nullptr == pJson  ) {
-        std::cout << " PluginConfig::asyncInit() cJSON_Print is fail" << std::endl;
-        cJSON_Delete( pNotifyJson );  // 释放内存
-        return -1;
-    }
-    
-    std::cout << "PluginConfig::asyncInit()  Generated JSON: " << pJson << std::endl;
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    std::cout << "PluginConfig::asyncInit()  Generated JSON: " << stNotifyJson << std::endl;
 
     // notify
-    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_INIT , pJson );
-
-    //释放内存
-    free( pJson );
-    cJSON_Delete( pNotifyJson );
+    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_INIT , stNotifyJson );
 
     return objNotifyParam.m_s32Ret ; 
 }
 
 NotifyParam PluginConfig::init()
 {   
+
+    std::cout << "PluginConfig::init(1)" << std::endl;
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
-
-    if( this->m_pRootJson )
-    {
-        objNotifyParam.m_s32Ret = -1 ;
-        objNotifyParam.m_eErrorCode = NotifyErrorCode::eNullPointerError ;
-
-        //print
-        std::cout << "PluginConfig::init() this->m_pRootJson is nullptr " << std::endl ;
-
-        return objNotifyParam;
-    }
 
     // 打开文件
     FILE *file = NULL;
@@ -220,41 +265,18 @@ NotifyParam PluginConfig::init()
 int PluginConfig::asyncRead( FuncAndParam const &param )
 {
     NotifyParam objNotifyParam = { 0 , "" ,  NotifyErrorCode::eInvialdError }; 
+    std::string stNotifyJson = "" ;
 
-
-    cJSON *pNotifyJson = nullptr ;
-    char *pJson = nullptr ;
-    
-    pNotifyJson = cJSON_CreateObject();
-    if ( nullptr == pNotifyJson ) 
-    {
-        std::cout << " PluginConfig::asyncRead() cJSON_CreateObject is fail" << std::endl;
-        return -1;
-    }
-
-    // init
+    // read
     objNotifyParam = Singleton_PluginConfig::getInstance()->read( param.data.c_str());
 
-
-    cJSON_AddNumberToObject(pNotifyJson, "result", objNotifyParam.m_s32Ret);
-    cJSON_AddStringToObject(pNotifyJson, "sucess_notify", objNotifyParam.m_stSuccessInfo.c_str());
-    cJSON_AddNumberToObject(pNotifyJson, "error_notify", objNotifyParam.m_eErrorCode);
-
-    pJson = cJSON_Print(pNotifyJson);
-    if (nullptr == pJson  ) {
-        std::cout << " PluginConfig::asyncRead() cJSON_Print is fail" << std::endl;
-        cJSON_Delete( pNotifyJson );  // 释放内存
-        return -1;
-    }
-    
-    std::cout << "PluginConfig::asyncRead()  Generated JSON: " << pJson << std::endl;
+    //make
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    std::cout << "PluginConfig::asyncRead()  Generated JSON: " << stNotifyJson << std::endl;
 
     // notify
-    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ , pJson );
+    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ , stNotifyJson );
 
-    //释放内存
-    free( pJson );
-    cJSON_Delete( pNotifyJson );
 
     return objNotifyParam.m_s32Ret ; 
 
@@ -312,40 +334,18 @@ NotifyParam PluginConfig::read(const char* str)
 int PluginConfig::asyncWrite( FuncAndParam const &param )
 {
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    std::string stNotifyJson = "" ;
 
 
-    cJSON *pNotifyJson = nullptr ;
-    char *pJson = nullptr ;
-    
-    pNotifyJson = cJSON_CreateObject();
-    if ( nullptr == pNotifyJson ) 
-    {
-        std::cout << " PluginConfig::asyncWrite() cJSON_CreateObject is fail" << std::endl;
-        return -1;
-    }
-
-    // init
+    //WRITE
     objNotifyParam = Singleton_PluginConfig::getInstance()->write( param.data.c_str());
 
-    cJSON_AddNumberToObject(pNotifyJson, "result", objNotifyParam.m_s32Ret);
-    cJSON_AddStringToObject(pNotifyJson, "sucess_notify", objNotifyParam.m_stSuccessInfo.c_str());
-    cJSON_AddNumberToObject(pNotifyJson, "error_notify", objNotifyParam.m_eErrorCode);
-    
-    pJson = cJSON_Print(pNotifyJson);
-    if (nullptr == pJson  ) {
-        std::cout << " PluginConfig::asyncWrite() cJSON_Print is fail" << std::endl;
-        cJSON_Delete( pNotifyJson );  // 释放内存
-        return -1;
-    }
-    
-    std::cout << "PluginConfig::asyncWrite()  Generated JSON: " << pJson << std::endl;
+    //make
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    std::cout << "PluginConfig::asyncWrite()  Generated JSON: " << stNotifyJson << std::endl;
 
     // notify
-    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_WRITE , pJson );
-
-    //释放内存
-    free( pJson );
-    cJSON_Delete( pNotifyJson );
+    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_WRITE , stNotifyJson );
 
     return objNotifyParam.m_s32Ret ; 
 }
@@ -416,41 +416,17 @@ NotifyParam PluginConfig::write(const char* str)
 int PluginConfig::asyncReset( FuncAndParam const &param )
 {
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    std::string stNotifyJson = "" ;
 
-
-    cJSON *pNotifyJson = nullptr ;
-    char *pJson = nullptr ;
-    
-    pNotifyJson = cJSON_CreateObject();
-    if ( nullptr == pNotifyJson ) 
-    {
-        std::cout << " PluginConfig::asyncReset() cJSON_CreateObject is fail" << std::endl;
-        return -1;
-    }
-
-    // init
+    //reset
     objNotifyParam = Singleton_PluginConfig::getInstance()->reset();
 
-    cJSON_AddNumberToObject(pNotifyJson, "result", objNotifyParam.m_s32Ret);
-    cJSON_AddStringToObject(pNotifyJson, "sucess_notify", objNotifyParam.m_stSuccessInfo.c_str());
-    cJSON_AddNumberToObject(pNotifyJson, "error_notify", objNotifyParam.m_eErrorCode);
-
-
-    pJson = cJSON_Print(pNotifyJson);
-    if (nullptr == pJson  ) {
-        std::cout << " PluginConfig::asyncReset() cJSON_Print is fail" << std::endl;
-        cJSON_Delete( pNotifyJson );  // 释放内存
-        return -1;
-    }
-    
-    std::cout << "PluginConfig::asyncReset()  Generated JSON: " << pJson << std::endl;
+    //make
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    std::cout << "PluginConfig::asyncReset()  Generated JSON: " << stNotifyJson << std::endl;
 
     // notify
-    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_RESET , pJson );
-
-    //释放内存
-    free( pJson );
-    cJSON_Delete( pNotifyJson );
+    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_RESET , stNotifyJson );
 
     return objNotifyParam.m_s32Ret ; 
 }
@@ -492,42 +468,20 @@ NotifyParam PluginConfig::reset()
 int PluginConfig::asyncClose( FuncAndParam const &param )
 {
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    std::string stNotifyJson = "" ;
 
-    cJSON *pNotifyJson = nullptr ;
-    char *pJson = nullptr ;
-    
-    pNotifyJson = cJSON_CreateObject();
-    if ( nullptr == pNotifyJson ) 
-    {
-        std::cout << " PluginConfig::asyncClose() cJSON_CreateObject is fail" << std::endl;
-        return -1;
-    }
-
-    // init
+    //close
     objNotifyParam =  Singleton_PluginConfig::getInstance()->close();
 
-    cJSON_AddNumberToObject(pNotifyJson, "result", objNotifyParam.m_s32Ret);
-    cJSON_AddStringToObject(pNotifyJson, "sucess_notify", objNotifyParam.m_stSuccessInfo.c_str());
-    cJSON_AddNumberToObject(pNotifyJson, "error_notify", objNotifyParam.m_eErrorCode);
-    
-    pJson = cJSON_Print(pNotifyJson);
-    if (nullptr == pJson  ) {
-        std::cout << " PluginConfig::asyncClose() cJSON_Print is fail" << std::endl;
-        cJSON_Delete( pNotifyJson );  // 释放内存
-        return -1;
-    }
-    
-    std::cout << "PluginConfig::asyncClose()  Generated JSON: " << pJson << std::endl;
+
+    //make
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    std::cout << "PluginConfig::asyncClose()  Generated JSON: " << stNotifyJson << std::endl;
 
     // notify
-    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_CLOSE , pJson );
-
-    //释放内存
-    free( pJson );
-    cJSON_Delete( pNotifyJson );
+    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_CLOSE , stNotifyJson );
 
     return objNotifyParam.m_s32Ret ; 
-
 }
 
 NotifyParam PluginConfig::close()
@@ -558,42 +512,18 @@ NotifyParam PluginConfig::close()
 
 int PluginConfig::asyncGetJson( FuncAndParam const &param )
 {
-
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    std::string stNotifyJson = "" ;
 
-
-    cJSON *pNotifyJson = nullptr ;
-    char *pJson = nullptr ;
-    
-    pNotifyJson = cJSON_CreateObject();
-    if ( nullptr == pNotifyJson ) 
-    {
-        std::cout << " PluginConfig::asyncGetJson() cJSON_CreateObject is fail" << std::endl;
-        return -1;
-    }
-
-    // init
+    //getJson
     objNotifyParam =  Singleton_PluginConfig::getInstance()->getJson( param.data.c_str() );
 
-    cJSON_AddNumberToObject(pNotifyJson, "result", objNotifyParam.m_s32Ret);
-    cJSON_AddStringToObject(pNotifyJson, "sucess_notify", objNotifyParam.m_stSuccessInfo.c_str());
-    cJSON_AddNumberToObject(pNotifyJson, "error_notify", objNotifyParam.m_eErrorCode);
-
-    pJson = cJSON_Print(pNotifyJson);
-    if (nullptr == pJson  ) {
-        std::cout << " PluginConfig::asyncGetJson() cJSON_Print is fail" << std::endl;
-        cJSON_Delete( pNotifyJson );  // 释放内存
-        return -1;
-    }
-    
-    std::cout << "PluginConfig::asyncGetJson()  Generated JSON: " << pJson << std::endl;
+    //make
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    std::cout << "PluginConfig::asyncGetJson()  Generated JSON: " << stNotifyJson << std::endl;
 
     // notify
-    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ_JSON , pJson );
-
-    //释放内存
-    free( pJson );
-    cJSON_Delete( pNotifyJson );
+    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ_JSON , stNotifyJson );
 
     return objNotifyParam.m_s32Ret ; 
 }
@@ -652,40 +582,17 @@ NotifyParam PluginConfig::getJson(const char* str)
 int PluginConfig::asyncGetAll( FuncAndParam const &param )
 {
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    std::string stNotifyJson = "" ;
 
-
-    cJSON *pNotifyJson = nullptr ;
-    char *pJson = nullptr ;
-    
-    pNotifyJson = cJSON_CreateObject();
-    if ( nullptr == pNotifyJson ) 
-    {
-        std::cout << " PluginConfig::asyncGetAll() cJSON_CreateObject is fail" << std::endl;
-        return -1;
-    }
-
-    // init
+    // getAll
     objNotifyParam =  Singleton_PluginConfig::getInstance()->getAll();
 
-    cJSON_AddNumberToObject(pNotifyJson, "result", objNotifyParam.m_s32Ret);
-    cJSON_AddStringToObject(pNotifyJson, "sucess_notify", objNotifyParam.m_stSuccessInfo.c_str());
-    cJSON_AddNumberToObject(pNotifyJson, "error_notify", objNotifyParam.m_eErrorCode);
-    
-    pJson = cJSON_Print(pNotifyJson);
-    if (nullptr == pJson  ) {
-        std::cout << " PluginConfig::asyncGetAll() cJSON_Print is fail" << std::endl;
-        cJSON_Delete( pNotifyJson );  // 释放内存
-        return -1;
-    }
-    
-    std::cout << "PluginConfig::asyncGetAll()  Generated JSON: " << pJson << std::endl;
+    //make
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    std::cout << "PluginConfig::asyncGetJson()  Generated JSON: " << stNotifyJson << std::endl;
 
     // notify
-    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ_JSON_ALL , pJson );
-
-    //释放内存
-    free( pJson );
-    cJSON_Delete( pNotifyJson );
+    Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ_JSON_ALL , stNotifyJson );
 
     return objNotifyParam.m_s32Ret ;
 }
@@ -776,7 +683,6 @@ NotifyParam PluginConfig::sync()
     return objNotifyParam ;
 }
 
-
 NotifyParam PluginConfig::fillEmptyRoot()
 {
     NotifyParam objNotifyParam = {0 , "" , NotifyErrorCode::eInvialdError }; 
@@ -798,6 +704,42 @@ NotifyParam PluginConfig::fillEmptyRoot()
     objNotifyParam = this->sync();
 
     return objNotifyParam ;
+}
+
+std::string PluginConfig::makeNotifyJson( NotifyParam &objNotifyParam)
+{
+    cJSON *pNotifyJson = nullptr ;
+    char *pJson = nullptr ;
+    std::string stRet = "" ;
+    
+    pNotifyJson = cJSON_CreateObject();
+    if ( nullptr == pNotifyJson ) 
+    {
+        std::cout << " PluginConfig::makeNotifyJson() cJSON_CreateObject is fail" << std::endl;
+        return stRet;
+    }
+
+    cJSON_AddNumberToObject(pNotifyJson, "result", objNotifyParam.m_s32Ret);
+    cJSON_AddStringToObject(pNotifyJson, "sucess_notify", objNotifyParam.m_stSuccessInfo.c_str());
+    cJSON_AddNumberToObject(pNotifyJson, "error_notify", objNotifyParam.m_eErrorCode);
+    
+    pJson = cJSON_Print(pNotifyJson);
+    if ( nullptr == pJson ) {
+        std::cout << " PluginConfig::makeNotifyJson() cJSON_Print is fail" << std::endl;
+        cJSON_Delete( pNotifyJson );  // 释放内存
+        return stRet;
+    }
+
+    //make
+    stRet = pJson ; 
+
+    //释放内存
+    free( pJson );
+    cJSON_Delete( pNotifyJson );
+
+
+    return stRet ;
+  
 }
 
 

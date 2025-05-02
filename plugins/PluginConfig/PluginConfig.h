@@ -84,6 +84,11 @@ private:
 
   NotifyParam fillEmptyRoot();
 
+  /**
+   * @brief append json
+   */
+  std::string makeNotifyJson( NotifyParam &objNotifyParam);
+
 
 private:
     cJSON *m_pRootJson;

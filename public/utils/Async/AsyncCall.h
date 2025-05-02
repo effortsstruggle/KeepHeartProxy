@@ -4,10 +4,8 @@
  *@since 
  *@date: 2025-02-06 19:36:47
 */
-
-
-
 #pragma once 
+
 #include <thread>
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,7 +24,6 @@ enum NotifyErrorCode
     eNullPointerError = 0x0000, 
     eWriteFileError ,
     eTypeError , 
-
     eInvialdError = 0xFFFF ,
 };
 
