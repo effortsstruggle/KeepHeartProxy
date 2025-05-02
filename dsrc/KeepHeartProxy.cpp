@@ -15,9 +15,14 @@ KeepHeartProxy::KeepHeartProxy()
     Singleton_ProxyLoadPlugin::getInstance()->addMonitor( CallBackFuncType ( std::bind(&KeepHeartProxy::onPluginNotify, this,_1,_2,_3) )); 
  }
  
- KeepHeartProxy::~KeepHeartProxy()
+KeepHeartProxy::~KeepHeartProxy()
 {
+
+    std::cout << "KeepHeartProxy::~KeepHeartProxy(1)" << std::endl;
+
     Singleton_ProxyLoadPlugin::getInstance()->closePluginHandles();
+
+    std::cout << "KeepHeartProxy::~KeepHeartProxy(2)" << std::endl;
 }
 
 Q_INVOKABLE int KeepHeartProxy::getPluginsID(QString pname)

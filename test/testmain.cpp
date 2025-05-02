@@ -34,7 +34,7 @@ public:
 
     ~TestKeepHeartProxy()
     {
-
+        std::cout << "~TestKeepHeartProxy(1)" << std::endl;
     }
 
 

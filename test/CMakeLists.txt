@@ -28,9 +28,8 @@ include_directories (
 file( GLOB SRC *.cpp *.c )
 
 link_directories( 
-  ${CMAKE_BINARY_DIR}/dsrc
-  ${CMAKE_BINARY_DIR}/public/utils
-  ${CMAKE_BINARY_DIR}/public/cjson
+  ${PACK_LIBS_DIR}
+  ${PACK_PUBLIC_DIR}
 )
 
 add_executable( ${LIB_NAME} ${SRC} )

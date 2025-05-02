@@ -24,9 +24,8 @@ file( GLOB SRC *.cpp *.c )
 
 # 库目录
 link_directories(
-   ${CMAKE_BINARY_DIR}/public/utils 
-   ${CMAKE_BINARY_DIR}/public/cjson
-   )
+  ${PACK_PUBLIC_DIR}
+)
 
 
 # 编译生成共享库

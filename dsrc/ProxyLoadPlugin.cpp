@@ -1,14 +1,8 @@
 #include "ProxyLoadPlugin.h"
 #include <dlfcn.h> // 动态链接库
 #include <dirent.h>
-#include <iostream>
 #include <string.h>
-
-// #include <sys/types.h> 
-// #include <unistd.h>
-
-
-
+#include "KeepHeartProxyLog.h"
 
 ProxyLoadPlugin::ProxyLoadPlugin() 
     : m_s32PluginCount(0)
@@ -19,8 +13,7 @@ ProxyLoadPlugin::ProxyLoadPlugin()
 
 ProxyLoadPlugin::~ProxyLoadPlugin()
 {
-
-    
+    std::cout << "ProxyLoadPlugin::~ProxyLoadPlugin(1)" << std::endl; 
 }               
 
 
@@ -90,6 +83,7 @@ int ProxyLoadPlugin::LoadPlugin(std::string const & path) {
     plugin->setPid( this->m_s32PluginCount );
 
     std::cout <<  "createPlugin path : " << path.c_str() << std::endl;
+
     std::string pname = plugin->GetPluginName();
 
     this->m_vecPlugins[ this->m_s32PluginCount ] = plugin;
@@ -125,17 +119,28 @@ int  ProxyLoadPlugin::executeFunctionAsyn(int plugID,int key, std::string const 
 
 int ProxyLoadPlugin::closePluginHandles()
 {
+
+    std::cout << "ProxyLoadPlugin::closePluginHandles(1)" << std::endl;
+
     for( int i = 0 ; i < this->m_s32PluginCount ; i++ )
     {
         this->closePluginHandle(i);
     }
+
+    std::cout << "ProxyLoadPlugin::closePluginHandles(2)" << std::endl;
 
     return 0;
 }
 
 int ProxyLoadPlugin::closePluginHandle(int pid)
 {
+
+    std::cout << "------- ProxyLoadPlugin::closePluginHandle(1) -------" << std::endl;
+
     dlclose( this->m_vecPluginHandles[pid] );
+
+    std::cout << "------- ProxyLoadPlugin::closePluginHandle(2) -------" << std::endl;
+    
     return 0;
 }
 

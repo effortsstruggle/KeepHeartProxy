@@ -14,8 +14,7 @@ include_directories(
 )
 
 link_directories(
-   ${CMAKE_BINARY_DIR}/public/utils 
-   ${CMAKE_BINARY_DIR}/public/cjson
+   ${PACK_PUBLIC_DIR}
 )
 
 file( GLOB SRC *.cpp *.c )
