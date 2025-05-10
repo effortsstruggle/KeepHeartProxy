@@ -2,9 +2,10 @@
 #define _PLUGIN_INTERFACE_
 
 #include <functional>
+#include <iostream>
 
 using CallBackFuncType = std::function<int(int, int,std::string)> ;
-using AsynCallBackFuncType = std::function<int(int, int,std::string)> ;
+using AsynCallBackFuncType = std::function<int(int,int,std::string)> ;
 
 class PluginInterface {
 public: 
@@ -42,7 +43,9 @@ public:
     void NotifyAsyn( int key , std::string const &data )
     {
        if( this->m_pAsncBackCallFunc )
+       {
            this->m_pAsncBackCallFunc( this->m_s32PluginId , key , data);   
+       }
     }
 
 

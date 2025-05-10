@@ -17,7 +17,7 @@ extern "C" PluginInterface* createPlugin() {
 
  
 PluginConfig::PluginConfig()
-    : m_stCfgPath("/data/keepheart.cfg") 
+    : m_stCfgPath("/home/qin/workspace/KeepHeartProxyDependsLib/data/keepheart.cfg") 
     , m_pRootJson( nullptr ) 
     , m_pAsyncCall( nullptr )
 {
@@ -114,10 +114,6 @@ int PluginConfig::execute(int key,std::string const &data)
 
 int PluginConfig::executeAsync( int key,std::string const &data )
 {
-
-
-    std::cout << "PluginConfig::executeAsync ---> : " << data << std::endl;
-
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError } ; 
     std::string stNotifyJson = "" ;
     cJSON *pRoot = nullptr ;
@@ -204,8 +200,6 @@ int PluginConfig::asyncInit( FuncAndParam const &param )
 
 NotifyParam PluginConfig::init()
 {   
-
-    std::cout << "PluginConfig::init(1)" << std::endl;
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
 
     // 打开文件
@@ -284,10 +278,9 @@ int PluginConfig::asyncRead( FuncAndParam const &param )
 
 NotifyParam PluginConfig::read(const char* str)
 {
-
     NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
 
-    if( this->m_pRootJson )
+    if( nullptr == this->m_pRootJson )
     {
         objNotifyParam.m_s32Ret = -1 ;
         objNotifyParam.m_eErrorCode = NotifyErrorCode::eNullPointerError ;
@@ -311,7 +304,7 @@ NotifyParam PluginConfig::read(const char* str)
     }
 
     // 判断是不是字符串类型
-    if ( pItem->type == cJSON_String) 
+    if ( pItem->type == cJSON_String ) 
     {	
         char * pStr = pItem->valuestring;		// 此赋值是浅拷贝，不需要现在释放内存
 
@@ -358,7 +351,7 @@ NotifyParam PluginConfig::write(const char* str)
     char *temptr;
     cJSON* pData = nullptr ;
 
-    if( this->m_pRootJson )
+    if( nullptr == this->m_pRootJson )
     {
         objNotifyParam.m_s32Ret = -1 ;
         objNotifyParam.m_eErrorCode = NotifyErrorCode::eNullPointerError ;
@@ -631,7 +624,6 @@ NotifyParam PluginConfig::sync()
 
         //print
         std::cout << "PluginConfig::sync() this->m_pRootJson is nullptr " << std::endl ;
-
         return objNotifyParam;
     }
 

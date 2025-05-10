@@ -110,20 +110,14 @@ int ProxyLoadPlugin::executeFunction(int plugID,int key, std::string const& data
 int  ProxyLoadPlugin::executeFunctionAsyn(int plugID,int key, std::string const & data )
 {
 
-    std::cout << "ProxyLoadPlugin::executeFunctionAsyn(1)" << std::endl;
-
     if( this->m_s32PluginCount > plugID  && plugID >= 0)
     {
-        std::cout << "ProxyLoadPlugin::executeFunctionAsyn(2)" << std::endl;
         return  this->m_vecPlugins[plugID]->executeAsync( key,data );
     }
     else
     {
         std::cerr << "executeEx unknow plugin id  " << plugID  << std::endl;
     }
-
-
-    std::cout << "ProxyLoadPlugin::executeFunctionAsyn(3)" << std::endl;
     
 }
 

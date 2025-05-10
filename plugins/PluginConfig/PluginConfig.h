@@ -15,7 +15,7 @@ class PluginConfig :public PluginInterface
 {
 public:
 
-    enum{
+    enum ePluginConfig{
         CFG_INIT,   // 打开
         CFG_CLOSE,  // 关闭
         CFG_READ,   // 读取 对于整数等类型直接返回

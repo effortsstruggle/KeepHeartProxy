@@ -30,8 +30,15 @@ public:
             qDebug() << " -- pid -- : " << pid << " -- code -- : " << code  << " -- data -- : " << data ;
         });
 
-        QString stData = "{\"data1\":\"1\"}";
+        QString stData = "{\"data1\":\"pw\"}";
         Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_INIT , stData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ , stData );
+        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_WRITE , stData );
+        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON , stData );
+        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON_ALL , stData );
+        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_CLOSE , stData );
+        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_RESET , stData );
+        
     }
 
     ~TestKeepHeartProxy()
@@ -48,10 +55,10 @@ public:
 public slots:
     void onPluginNotify(int pid, int code, QString data)
     {
+        qDebug() << " code : " << code << " data : " << data  ;
+
         if( pid == this->m_s32PluginConfigId )
         {
-
-            qDebug() << " code : " << code << " data : " << data  ;
             switch ( code )
             {
 
@@ -86,10 +93,11 @@ public slots:
 
     void onPluginNotifyAsyn(int pid, int code, QString data)
     {
+
+        qDebug() << " code : " << code << " data : " << data  ;
+
         if( pid == this->m_s32PluginConfigId )
         {
-
-            qDebug() << " code : " << code << " data : " << data  ;
             switch ( code )
             {
 
@@ -136,7 +144,7 @@ int main(int argc, char *argv[])
 {
     Singleton_TestKeepHeartProxy::getInstance()->emitTestSignal();
 
-
+    usleep( 5 * 1000 );
     std::cout << "-------------------end---------------------------" << std::endl;
     return 0;
 }

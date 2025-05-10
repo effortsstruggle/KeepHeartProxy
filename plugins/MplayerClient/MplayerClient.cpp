@@ -12,14 +12,11 @@
 #include "dvrFiles.h"
 #include "dvrTypes.h"
 #include <iostream>
-
 #include "properties.h"
 
 #include <unistd.h>
-#include <android/log.h>
 #include <mutex>
 
-#define  LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, "SKY_CFG", __VA_ARGS__);
 using namespace std;
 
 static char szBuf512[521];

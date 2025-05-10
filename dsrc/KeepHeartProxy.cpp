@@ -15,7 +15,7 @@ KeepHeartProxy::KeepHeartProxy()
     Singleton_ProxyLoadPlugin::getInstance()->LoadPlugnins();
 
     Singleton_ProxyLoadPlugin::getInstance()->addMonitor( CallBackFuncType ( std::bind(&KeepHeartProxy::onPluginNotify, this,_1,_2,_3) )); 
-    Singleton_ProxyLoadPlugin::getInstance()->addMonitor( CallBackFuncType ( std::bind(&KeepHeartProxy::onPluginNotify, this,_1,_2,_3) )); 
+    Singleton_ProxyLoadPlugin::getInstance()->addMonitorAsync( AsynCallBackFuncType ( std::bind(&KeepHeartProxy::onPluginNotifyAsyn, this,_1,_2,_3) )); 
 
     std::cout << " KeepHeartProxy::KeepHeartProxy(2)" << std::endl ;
 
