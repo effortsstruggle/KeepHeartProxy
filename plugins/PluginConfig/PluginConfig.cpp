@@ -18,7 +18,6 @@ extern "C" PluginInterface* createPlugin() {
  
 PluginConfig::PluginConfig()
     : m_stCfgPath("/home/qin/workspace/KeepHeartProxyDependsLib/data/keepheart.cfg") 
-    // , m_pRootJson( nullptr ) 
     , m_pAsyncCall( nullptr )
 {
 
@@ -48,7 +47,6 @@ int PluginConfig::execute(int key,std::string const &data)
         JsonWrapper oJsonWrapper( data ) ;
         stInputData = oJsonWrapper.getString( "data1" );
     }
-
 
     switch (key)
     {
@@ -99,7 +97,6 @@ int PluginConfig::executeAsync( int key,std::string const &data )
         stInputData = objJsonWrapper.getString( "data1" );
     }
 
-
     switch (key)
     {
     case CFG_INIT:
@@ -138,6 +135,7 @@ int PluginConfig::asyncInit( FuncAndParam const &param )
 
     // init
     oNotifyParam = Singleton_PluginConfig::getInstance()->init();
+    //make
     stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( oNotifyParam );
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_INIT , stNotifyJson );
@@ -155,11 +153,11 @@ NotifyParam PluginConfig::init()
     char *pJsonStr = nullptr ; 
 
     // 打开文件
-
     pFile = ::fopen( this->m_stCfgPath.c_str() , "r");
-    if ( pFile == NULL) 
+    if ( nullptr == pFile ) 
     {
         oNotifyParam = this->fillEmptyRoot();
+
         std::cout << "PluginConfig::init() file open fail , path : " << this->m_stCfgPath << std::endl;
         return oNotifyParam ;
     }
@@ -446,10 +444,10 @@ NotifyParam PluginConfig::sync()
 {
 
     NotifyParam objNotifyParam = {0 , "" , NotifyErrorCode::eInvialdError }; 
-
+    FILE *pFile = nullptr ;
     // 打开文件
-    FILE *file  = fopen( this->m_stCfgPath.c_str() , "w");
-    if ( nullptr == file ) 
+    pFile = fopen( this->m_stCfgPath.c_str() , "w");
+    if ( nullptr == pFile ) 
     {
         objNotifyParam.m_s32Ret = -1 ;
         objNotifyParam.m_eErrorCode = NotifyErrorCode::eNullPointerError ;
@@ -460,22 +458,23 @@ NotifyParam PluginConfig::sync()
     }
 
     std::string stData = this->m_oJsonWrapper.toString();
+
+    std::cout <<  "PluginConfig::sync() data: " << stData << std::endl;
        
     // 写入文件
-    int ret = fwrite( stData.c_str() , sizeof(char), stData.size() , file);
-    fclose(file);  
+    objNotifyParam.m_s32Ret = fwrite( stData.c_str() , sizeof(char), stData.size() , pFile);
+    fclose(pFile);  
 
-       
-       
-    objNotifyParam.m_s32Ret = ret ;
-    if (ret == 0) 
+
+   
+    if ( objNotifyParam.m_s32Ret == 0) 
     { 
         objNotifyParam.m_eErrorCode = NotifyErrorCode::eWriteFileError ;
         std::cout <<  "PluginConfig::sync() write fail. " << std::endl;
     }
     else //success 
     {
-        objNotifyParam.m_stSuccessInfo = "write success" ;
+        objNotifyParam.m_stSuccessInfo = stData ;
         std::cout <<  "PluginConfig::sync() write success. " << std::endl;
     }
 
@@ -486,21 +485,22 @@ NotifyParam PluginConfig::fillEmptyRoot()
 {
     NotifyParam objNotifyParam = {0 , "" , NotifyErrorCode::eInvialdError }; 
 
-    this->m_oJsonWrapper.set("pw","111111");
-    this->m_oJsonWrapper.set("enablePW","1");
-    this->m_oJsonWrapper.set("inputTimes","6");
-    this->m_oJsonWrapper.set("diMcuUnitTemper",0);
-    this->m_oJsonWrapper.set("diMcuLanguage",0);
-    this->m_oJsonWrapper.set("Units",0);
-    this->m_oJsonWrapper.set("diMcuUnitTime",1);
-    this->m_oJsonWrapper.set("controlbrightMode",0);
-    this->m_oJsonWrapper.set("dashBoardtbrightMode",0);
-    this->m_oJsonWrapper.set("diRadioArea",0);
-    this->m_oJsonWrapper.set("gyro_init_x",0);
-    this->m_oJsonWrapper.set("gyro_init_y",0); 
+    this->m_oJsonWrapper.addItemToObject("pw","111111");
+    this->m_oJsonWrapper.addItemToObject("enablePW","1");
+    this->m_oJsonWrapper.addItemToObject("inputTimes","6");
+    this->m_oJsonWrapper.addItemToObject("diMcuUnitTemper",0);
+    this->m_oJsonWrapper.addItemToObject("diMcuLanguage",0);
+    this->m_oJsonWrapper.addItemToObject("Units",0);
+    this->m_oJsonWrapper.addItemToObject("diMcuUnitTime",1);
+    this->m_oJsonWrapper.addItemToObject("controlbrightMode",0);
+    this->m_oJsonWrapper.addItemToObject("dashBoardtbrightMode",0);
+    this->m_oJsonWrapper.addItemToObject("diRadioArea",0);
+    this->m_oJsonWrapper.addItemToObject("gyro_init_x",0);
+    this->m_oJsonWrapper.addItemToObject("gyro_init_y",0); 
+
+    
 
     objNotifyParam = this->sync();
-
     return objNotifyParam ;
 }
 
@@ -508,9 +508,9 @@ std::string PluginConfig::makeNotifyJson( NotifyParam &objNotifyParam )
 {
 
     JsonWrapper objJsonWrapper;
-    objJsonWrapper.set( "result" ,  objNotifyParam.m_s32Ret );
-    objJsonWrapper.set( "sucess_notify" , objNotifyParam.m_stSuccessInfo );
-    objJsonWrapper.set( "error_notify" ,  objNotifyParam.m_eErrorCode );
+    objJsonWrapper.addItemToObject( "result" ,  objNotifyParam.m_s32Ret );
+    objJsonWrapper.addItemToObject( "sucess_notify" , objNotifyParam.m_stSuccessInfo );
+    objJsonWrapper.addItemToObject( "error_notify" ,  objNotifyParam.m_eErrorCode );
 
     return objJsonWrapper.toString() ;
 }

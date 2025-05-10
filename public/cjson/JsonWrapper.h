@@ -42,11 +42,16 @@ public:
     JsonWrapper getArrayItem(size_t index) const;
 
 
-    // 修改 JSON 数据
-    JsonWrapper& set(const std::string& key, const std::string& value);
-    JsonWrapper& set(const std::string& key, int value);
-    JsonWrapper& set(const std::string& key, double value);
-    JsonWrapper& set(const std::string& key, bool value);
+    // add JSON 数据
+    JsonWrapper& addItemToObject(const std::string& key, const std::string& value);
+    JsonWrapper& addItemToObject(const std::string& key, int value);
+    JsonWrapper& addItemToObject(const std::string& key, double value);
+
+    JsonWrapper& replaceItemToObject(const std::string& key, const std::string& value);
+    JsonWrapper& replaceItemToObject(const std::string& key, int value);
+    JsonWrapper& replaceItemToObject(const std::string& key, double value);
+
+
     JsonWrapper& pushArrayItem(const std::string& arrayKey, const JsonWrapper& value);
 
     // 类型安全的数据获取方法

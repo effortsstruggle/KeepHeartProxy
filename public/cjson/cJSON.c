@@ -2383,6 +2383,7 @@ static cJSON_bool replace_item_in_object(cJSON *object, const char *string, cJSO
     {
         cJSON_free(replacement->string);
     }
+    
     replacement->string = (char*)cJSON_strdup((const unsigned char*)string, &global_hooks);
     if (replacement->string == NULL)
     {

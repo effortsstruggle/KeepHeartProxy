@@ -1,11 +1,12 @@
 #include "JsonWrapper.h"
 #include <stdexcept>
+#include <iostream>
 
 // 默认构造函数：创建空对象
 JsonWrapper::JsonWrapper() 
     : m_pRoot( ::cJSON_CreateObject() ) 
 {
-    
+    std::cout << "JsonWrapper::JsonWrapper(1) " << std::endl; 
 }
 
 JsonWrapper::JsonWrapper( const std::string &stJson )
@@ -65,18 +66,44 @@ JsonWrapper JsonWrapper::getArrayItem(size_t index) const {
     return JsonWrapper(item);
 }
 
-// 修改 JSON 数据：设置值
-JsonWrapper& JsonWrapper::set(const std::string& key, const std::string& value) {
-    this->validateNode("set() on non-object");
-    ::cJSON_ReplaceItemInObjectCaseSensitive( this->m_pRoot , key.c_str(), ::cJSON_CreateString(value.c_str()));
+// add JSON 数据
+JsonWrapper& JsonWrapper::addItemToObject(const std::string& key, const std::string& value){
+    this->validateNode("addItemToObject() on non-object");
+    ::cJSON_AddItemToObject( this->m_pRoot , key.c_str() , ::cJSON_CreateString(value.c_str()) );
     return *this;
 }
 
-JsonWrapper& JsonWrapper::set(const std::string& key, int value) {
-    this->validateNode("set() on non-object");
-    ::cJSON_ReplaceItemInObjectCaseSensitive( this->m_pRoot  , key.c_str(), ::cJSON_CreateNumber(value));
+JsonWrapper& JsonWrapper::addItemToObject(const std::string& key, int value){
+    this->validateNode("addItemToObject() on non-object");
+    ::cJSON_AddItemToObject( this->m_pRoot , key.c_str() , ::cJSON_CreateNumber(value) );
     return *this;
 }
+JsonWrapper& JsonWrapper::addItemToObject(const std::string& key, double value){
+    this->validateNode("addItemToObject() on non-object");
+    ::cJSON_AddItemToObject( this->m_pRoot , key.c_str() , ::cJSON_CreateNumber(value) );
+    return *this;
+}
+    
+
+JsonWrapper& JsonWrapper::replaceItemToObject(const std::string& key, const std::string& value){
+    this->validateNode("replaceItemToObject() on non-object");
+    ::cJSON_ReplaceItemInObject( this->m_pRoot , key.c_str() , ::cJSON_CreateString(value.c_str()) );
+    return *this;
+}
+
+JsonWrapper& JsonWrapper::replaceItemToObject(const std::string& key, int value){
+    this->validateNode("replaceItemToObject() on non-object");
+    ::cJSON_ReplaceItemInObject( this->m_pRoot , key.c_str() , ::cJSON_CreateNumber(value) );
+    return *this;
+}
+
+JsonWrapper& JsonWrapper::replaceItemToObject(const std::string& key, double value){
+    this->validateNode("replaceItemToObject() on non-object");
+    ::cJSON_ReplaceItemInObject( this->m_pRoot , key.c_str() , ::cJSON_CreateNumber(value) );
+    return *this;
+}
+
+
 
 // 修改 JSON 数据：添加数组元素
 JsonWrapper& JsonWrapper::pushArrayItem(const std::string& arrayKey, const JsonWrapper& value) {
