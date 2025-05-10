@@ -8,7 +8,7 @@
 
 #include "PluginInterface.h"
 #include <Singleton/singleton.h>
-#include <cJSON.h>
+#include <JsonWrapper.h>
 #include <Async/AsyncCall.h>
 
 class PluginConfig :public PluginInterface
@@ -49,13 +49,13 @@ protected:
    *@brief: 从json 中读取数据
   */
   static int asyncRead(FuncAndParam const &param );
-  NotifyParam read(const char* id);
+  NotifyParam read( std::string stData );
 
   /**
    *@brief: 
   */
   static int asyncWrite(FuncAndParam const &param );
-  NotifyParam write(const char* str);
+  NotifyParam write( std::string stData);
 
   /**
    *@brief: 删除配置文件重置
@@ -70,7 +70,7 @@ protected:
 
 
   static int asyncGetJson(FuncAndParam const &param );
-  NotifyParam getJson(const char* str);
+  NotifyParam getJson( std::string str);
 
   static int asyncGetAll(FuncAndParam const &param );
   NotifyParam getAll();
@@ -91,7 +91,8 @@ private:
 
 
 private:
-    cJSON *m_pRootJson;
+
+    JsonWrapper m_oJsonWrapper ; 
     AsyncCall *m_pAsyncCall ;
     std::string m_stCfgPath;
 };

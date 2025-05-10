@@ -92,26 +92,26 @@ JsonWrapper& JsonWrapper::pushArrayItem(const std::string& arrayKey, const JsonW
 
 
 // 类型安全的数据获取
-std::string JsonWrapper::getString() const {
+std::string JsonWrapper::getString( const std::string &key ) const {
     this->validateNode("getString() on non-string");
-    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot , "value")->valuestring;
+    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot , key.c_str())->valuestring;
 }
 
-int JsonWrapper::getInt() const {
+int JsonWrapper::getInt( const std::string &key ) const {
     this->validateNode("getInt() on non-number");
-    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, "value")->valueint;
+    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, key.c_str())->valueint;
 }
 
 
-double JsonWrapper::getDouble() const {
+double JsonWrapper::getDouble( const std::string &key ) const {
     this->validateNode("getDouble() on non-number");
-    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, "value")->valuedouble;
+    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, key.c_str())->valuedouble;
 }
 
 
-bool JsonWrapper::getBool() const {
+bool JsonWrapper::getBool( const std::string &key ) const {
     this->validateNode("getBool() on non-number");
-    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, "value")->valueint;
+    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, key.c_str())->valueint;
 }
 
 // 序列化为字符串

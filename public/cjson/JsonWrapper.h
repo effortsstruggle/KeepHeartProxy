@@ -50,10 +50,10 @@ public:
     JsonWrapper& pushArrayItem(const std::string& arrayKey, const JsonWrapper& value);
 
     // 类型安全的数据获取方法
-    std::string getString() const;
-    int getInt() const;
-    double getDouble() const;
-    bool getBool() const;
+    std::string getString( const std::string &key ) const;
+    int getInt( const std::string &key ) const;
+    double getDouble( const std::string &key ) const;
+    bool getBool( const std::string &key ) const;
     // JsonWrapper getObject() const;
     // JsonWrapper getArray() const;
 
