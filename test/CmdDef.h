@@ -72,6 +72,5 @@ enum {
   CFG_WRITE,   // 写入
   CFG_RESET,   // 删除文件重置
   CFG_READ_JSON, // 要求返回json 字符串，在回调函数中
-  CFG_READ_JSON_ALL // 返回文件中所有数据
-  
+  CFG_READ_JSON_ALL // 返回文件中所有数据 
 };

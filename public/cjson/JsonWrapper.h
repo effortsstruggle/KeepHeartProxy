@@ -36,11 +36,13 @@ public:
     void parse(const std::string& stJson);
 
     // 获取子对象（链式调用）
-    JsonWrapper get(const std::string& key) const;
-    
+    JsonWrapper getObject(const std::string& key) const;
     // 获取数组元素（链式调用）
     JsonWrapper getArrayItem(size_t index) const;
-
+    std::string getString(const std::string& key) const;
+    bool getBool(const std::string& key) const;
+    int getInt(const std::string& key) const;
+    double getDouble(const std::string& key) const;
 
     // add JSON 数据
     JsonWrapper& addItemToObject(const std::string& key, const std::string& value);
@@ -54,22 +56,15 @@ public:
 
     JsonWrapper& pushArrayItem(const std::string& arrayKey, const JsonWrapper& value);
 
-    // 类型安全的数据获取方法
-    std::string getString( const std::string &key ) const;
-    int getInt( const std::string &key ) const;
-    double getDouble( const std::string &key ) const;
-    bool getBool( const std::string &key ) const;
-    // JsonWrapper getObject() const;
-    // JsonWrapper getArray() const;
 
     // 检查当前节点类型
-    bool isString() const;
-    bool isInt() const;
-    bool isDouble() const;
-    bool isBool() const;
-    bool isObject() const;
-    bool isArray() const;
-
+    bool isString( std::string key ) const;
+    bool isInt( std::string key ) const;
+    bool isDouble( std::string key ) const;
+    bool isBool( std::string key ) const;
+    bool isArray( std::string key ) const;
+    bool isObject( std::string key ) const;
+    
     // 序列化为字符串
     std::string toString() const;
 

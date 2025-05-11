@@ -6,7 +6,7 @@
 JsonWrapper::JsonWrapper() 
     : m_pRoot( ::cJSON_CreateObject() ) 
 {
-    std::cout << "JsonWrapper::JsonWrapper(1) " << std::endl; 
+    // std::cout << "JsonWrapper::JsonWrapper(1) " << std::endl; 
 }
 
 JsonWrapper::JsonWrapper( const std::string &stJson )
@@ -46,10 +46,13 @@ void JsonWrapper::parse(const std::string& stJson) {
     }
 }
 
+
+
 // 获取子节点（链式调用）
-JsonWrapper JsonWrapper::get(const std::string& key) const {
+JsonWrapper JsonWrapper::getObject(const std::string& key) const {
     validateNode("get() on non-object");
-    cJSON* child = ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot , key.c_str());
+    // cJSON* child = ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot , key.c_str());
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
     if ( nullptr == child) {
         throw std::runtime_error("Key not found: " + key);
     }
@@ -60,11 +63,51 @@ JsonWrapper JsonWrapper::get(const std::string& key) const {
 JsonWrapper JsonWrapper::getArrayItem(size_t index) const {
     this->validateNode("getArrayItem() on non-array");
     cJSON* item = ::cJSON_GetArrayItem( this->m_pRoot , static_cast<int>(index));
-    if (!item) {
+    if ( nullptr == item) {
         throw std::out_of_range("Array index out of range");
     }
     return JsonWrapper(item);
 }
+
+
+
+std::string JsonWrapper::getString(const std::string& key) const {
+    this->validateNode("get() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return child->valuestring;
+}
+
+bool JsonWrapper::getBool(const std::string& key) const {
+    this->validateNode("get() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return child->valueint ;
+}
+
+
+int JsonWrapper::getInt(const std::string& key) const {
+    this->validateNode("get() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return child->valueint ;
+}
+
+double JsonWrapper::getDouble(const std::string& key) const {
+    this->validateNode("get() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return child->valuedouble ;
+}
+
 
 // add JSON 数据
 JsonWrapper& JsonWrapper::addItemToObject(const std::string& key, const std::string& value){
@@ -106,39 +149,15 @@ JsonWrapper& JsonWrapper::replaceItemToObject(const std::string& key, double val
 
 
 // 修改 JSON 数据：添加数组元素
-JsonWrapper& JsonWrapper::pushArrayItem(const std::string& arrayKey, const JsonWrapper& value) {
+JsonWrapper& JsonWrapper::pushArrayItem(const std::string& arrayKey, const JsonWrapper& value) 
+{
     this->validateNode("pushArrayItem() on non-object");
-    cJSON* array = ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot , arrayKey.c_str());
+    cJSON* array = ::cJSON_GetObjectItem( this->m_pRoot , arrayKey.c_str());
     if (!array || ! ::cJSON_IsArray(array)) {
         throw std::runtime_error("Key is not an array: " + arrayKey);
     }
     ::cJSON_AddItemToArray(array, value.m_pRoot );
     return *this;
-}
-
-
-
-// 类型安全的数据获取
-std::string JsonWrapper::getString( const std::string &key ) const {
-    this->validateNode("getString() on non-string");
-    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot , key.c_str())->valuestring;
-}
-
-int JsonWrapper::getInt( const std::string &key ) const {
-    this->validateNode("getInt() on non-number");
-    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, key.c_str())->valueint;
-}
-
-
-double JsonWrapper::getDouble( const std::string &key ) const {
-    this->validateNode("getDouble() on non-number");
-    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, key.c_str())->valuedouble;
-}
-
-
-bool JsonWrapper::getBool( const std::string &key ) const {
-    this->validateNode("getBool() on non-number");
-    return ::cJSON_GetObjectItemCaseSensitive( this->m_pRoot, key.c_str())->valueint;
 }
 
 // 序列化为字符串
@@ -150,52 +169,88 @@ std::string JsonWrapper::toString() const {
 }
 
 // 私有构造函数：从 cJSON 节点创建
-JsonWrapper::JsonWrapper(cJSON* node) :  m_pRoot(node) {}
+JsonWrapper::JsonWrapper(cJSON* node) 
+    :  m_pRoot(node) 
+{
+
+}
 
 // 验证节点有效性
-void JsonWrapper::validateNode(const std::string& context) const {
+void JsonWrapper::validateNode(const std::string& context) const 
+{
     if ( nullptr == this->m_pRoot ) {
         throw std::runtime_error(context + ": Invalid JSON node");
     }
 }
 
 // 清理资源
-void JsonWrapper::clear() {
-    if ( this->m_pRoot) {
+void JsonWrapper::clear() 
+{
+    if ( nullptr != this->m_pRoot ) {
         ::cJSON_Delete( this->m_pRoot );
         this->m_pRoot = nullptr;
     }
 }
 
 // 类型检查方法
-bool JsonWrapper::isString() const 
+bool JsonWrapper::isString( std::string key ) const 
 {
-     return ::cJSON_IsString( this->m_pRoot );
+    validateNode("isString() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return ::cJSON_IsString( child );
 }
 
-bool JsonWrapper::isInt() const 
+bool JsonWrapper::isInt( std::string key ) const 
 {
-     return ::cJSON_IsNumber( this->m_pRoot ); 
+    validateNode("isInt() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return ::cJSON_IsNumber( child ); 
 }
 
-bool JsonWrapper::isDouble() const
+bool JsonWrapper::isDouble( std::string key ) const 
 {
-    return ::cJSON_IsNumber( this->m_pRoot ); 
+    validateNode("isDouble() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return ::cJSON_IsNumber( child ); 
 }
 
-bool JsonWrapper::isBool() const
+bool JsonWrapper::isBool( std::string key ) const 
 {
-    return ::cJSON_IsNumber( this->m_pRoot ); 
+    validateNode("isBool() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return ::cJSON_IsNumber( child ); 
 }
 
-bool JsonWrapper::isArray() const 
-{ 
-    return ::cJSON_IsArray( this->m_pRoot ); 
+bool JsonWrapper::isArray( std::string key ) const 
+{
+    validateNode("isArray() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return ::cJSON_IsArray( child ); 
 }
 
-bool JsonWrapper::isObject() const 
-{ 
-    return ::cJSON_IsObject( this->m_pRoot ); 
+bool JsonWrapper::isObject( std::string key ) const 
+{
+    validateNode("isObject() on non-object");
+    cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
+    if ( nullptr == child) {
+        throw std::runtime_error("Key not found: " + key);
+    }
+    return ::cJSON_IsObject( child ); 
 }
 
 

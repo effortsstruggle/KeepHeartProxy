@@ -1,6 +1,7 @@
 
 #include "AsyncCall.h"
 #include <functional>
+#include <iostream>
 
 
 AsyncCall::AsyncCall()
@@ -18,8 +19,10 @@ AsyncCall::AsyncCall()
 
 AsyncCall::~AsyncCall()
 {
+    std::cout << "AsyncCall::~AsyncCall(1)" << std::endl;
     this->m_isRun = false ;
     this->m_objCv.notify_one();
+    std::cout << "AsyncCall::~AsyncCall(2)" << std::endl;
 }
 
 void AsyncCall::SetLogTag(std::string const & tag)
@@ -36,18 +39,19 @@ void  AsyncCall::delayedExecution()
         {
         	std::unique_lock<std::mutex> lock( this->m_objCmvtx);
             this->m_objCv.wait(lock,[&]{
-                return  this->m_isRun && ! this->m_pFmFuncArr.empty();
+                return  ! this->m_isRun || ! this->m_pFmFuncArr.empty();
                 });
 
             if( ! this->m_isRun )
                 break;
-		
+
             ft = this->m_pFmFuncArr.front();
             this->m_pFmFuncArr.pop();
         }
         ++this->m_s32RunCount;
         ft.pFunc(ft);
     }
+
 }
 
 void AsyncCall::AddFunctionToQueue(FuncAndParam const & fp)

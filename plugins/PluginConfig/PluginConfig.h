@@ -8,9 +8,10 @@
 
 #include "PluginInterface.h"
 #include <Singleton/singleton.h>
-#include <JsonWrapper.h>
 #include <Async/AsyncCall.h>
 
+
+class JsonWrapper ;
 class PluginConfig :public PluginInterface
 {
 public:
@@ -89,10 +90,9 @@ private:
    */
   std::string makeNotifyJson( NotifyParam &objNotifyParam);
 
-
 private:
 
-    JsonWrapper m_oJsonWrapper ; 
+    JsonWrapper *m_pJsonWrapper ; 
     AsyncCall *m_pAsyncCall ;
     std::string m_stCfgPath;
 };
@@ -107,5 +107,5 @@ using Singleton_PluginConfig = Singleton<PluginConfig>;
 extern "C" PluginInterface* createPlugin() ;
 // 释放删插件，确保插件未在使用中
 extern "C" void destroyPlugin(PluginInterface* plugin) {
-  
+    // Singleton_PluginConfig::destroy();
 }

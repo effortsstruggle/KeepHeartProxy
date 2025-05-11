@@ -1,17 +1,7 @@
-#include <stdio.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <getopt.h>
-#include <errno.h>
-#include <KeepHeartProxy.h>
 #include <QDebug>
+#include <KeepHeartProxy.h>
+#include <Singleton/singleton.h>
+#include <unistd.h>
 #include "CmdDef.h"
 
 
@@ -25,14 +15,12 @@ public:
 
         QObject::connect( Singleton_KeepHeartProxy::getInstance() ,  &KeepHeartProxy::pluginNotify , this, &TestKeepHeartProxy::onPluginNotify , Qt::DirectConnection);
         QObject::connect( Singleton_KeepHeartProxy::getInstance() ,  &KeepHeartProxy::pluginNotifyAsyn , this, &TestKeepHeartProxy::onPluginNotifyAsyn , Qt::DirectConnection);
-        QObject::connect( this , &TestKeepHeartProxy::testsignal , 
-            this, [=](int pid , int code , QString data){
-            qDebug() << " -- pid -- : " << pid << " -- code -- : " << code  << " -- data -- : " << data ;
-        });
+
 
         QString stData = "{\"data1\":\"pw\"}";
         Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_INIT , stData );
         Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ , stData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_CLOSE , stData );
         // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_WRITE , stData );
         // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON , stData );
         // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON_ALL , stData );
@@ -43,19 +31,12 @@ public:
 
     ~TestKeepHeartProxy()
     {
-        std::cout << "~TestKeepHeartProxy(1)" << std::endl;
-    }
-
-
-    void emitTestSignal()
-    {
-        emit testsignal(1,1,"hahaahahahhaha");
     }
 
 public slots:
     void onPluginNotify(int pid, int code, QString data)
     {
-        qDebug() << " code : " << code << " data : " << data  ;
+        qDebug() << "onPluginNotify ::  code : " << code << " data : " << data  ;
 
         if( pid == this->m_s32PluginConfigId )
         {
@@ -94,7 +75,7 @@ public slots:
     void onPluginNotifyAsyn(int pid, int code, QString data)
     {
 
-        qDebug() << " code : " << code << " data : " << data  ;
+        qDebug() << " onPluginNotifyAsyn :: code : " << code << " data : " << data  ;
 
         if( pid == this->m_s32PluginConfigId )
         {
@@ -142,7 +123,7 @@ using Singleton_TestKeepHeartProxy = Singleton<TestKeepHeartProxy>;
 
 int main(int argc, char *argv[])
 {
-    Singleton_TestKeepHeartProxy::getInstance()->emitTestSignal();
+    Singleton_TestKeepHeartProxy::getInstance() ; // ->emitTestSignal();
 
     usleep( 5 * 1000 );
     std::cout << "-------------------end---------------------------" << std::endl;
