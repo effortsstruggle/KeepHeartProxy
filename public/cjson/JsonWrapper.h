@@ -35,6 +35,8 @@ public:
     // 解析 JSON 字符串
     void parse(const std::string& stJson);
 
+    void reset() ;
+
     // 获取子对象（链式调用）
     JsonWrapper getObject(const std::string& key) const;
     // 获取数组元素（链式调用）

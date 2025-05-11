@@ -356,22 +356,23 @@ int PluginConfig::asyncReset( FuncAndParam const &param )
 
 NotifyParam PluginConfig::reset()
 {
-    NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError };     
+    NotifyParam oNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError };     
 
     if ( -1 == ::remove( this->m_stCfgPath.c_str() ) )
     {
-        objNotifyParam.m_s32Ret = -1 ;
-        objNotifyParam.m_eErrorCode = NotifyErrorCode::eNullPointerError ;
+        oNotifyParam.m_s32Ret = -1 ;
+        oNotifyParam.m_eErrorCode = NotifyErrorCode::eNullPointerError ;
         std::cout << "PluginConfig::reset() remove file fail. " << std::endl ;
-        return objNotifyParam;
+        return oNotifyParam;
     } 
 
-    //clear memory
-    this->m_pJsonWrapper->clear();
-    //reset
-    objNotifyParam = this->init();
+    //reset memory
+    this->m_pJsonWrapper->reset();
 
-    return objNotifyParam;
+    //reset
+    oNotifyParam = this->init();
+
+    return oNotifyParam;
 }
 
 
@@ -395,7 +396,6 @@ NotifyParam PluginConfig::close()
 {
     NotifyParam oNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
 
-    std::cout <<  "PluginConfig::close(1) this: " << this << std::endl;
     oNotifyParam = this->sync();
 
     return oNotifyParam;
@@ -404,42 +404,42 @@ NotifyParam PluginConfig::close()
 
 int PluginConfig::asyncGetJson( FuncAndParam const &param )
 {
-    NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    NotifyParam oNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
     std::string stNotifyJson = "" ;
 
     //getJson
-    objNotifyParam =  Singleton_PluginConfig::getInstance()->getJson( param.data );
+    oNotifyParam =  Singleton_PluginConfig::getInstance()->getJson( param.data );
     //make
-    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( oNotifyParam );
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ_JSON , stNotifyJson );
     std::cout << "PluginConfig::asyncGetJson()  Generated JSON: " << stNotifyJson << std::endl;
 
-    return objNotifyParam.m_s32Ret ; 
+    return oNotifyParam.m_s32Ret ; 
 }
 
 NotifyParam PluginConfig::getJson( std::string stData )
 {
-    NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    NotifyParam oNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
 
-    return objNotifyParam ;
+    return oNotifyParam ;
 }
 
 
 int PluginConfig::asyncGetAll( FuncAndParam const &param )
 {
-    NotifyParam objNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+    NotifyParam oNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
     std::string stNotifyJson = "" ;
 
     // getAll
-    objNotifyParam =  Singleton_PluginConfig::getInstance()->getAll();
+    oNotifyParam =  Singleton_PluginConfig::getInstance()->getAll();
     //make
-    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
+    stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( oNotifyParam );
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ_JSON_ALL , stNotifyJson );
-    std::cout << "PluginConfig::asyncGetJson()  Generated JSON: " << stNotifyJson << std::endl;
+    std::cout << "PluginConfig::asyncGetAll()  Generated JSON: " << stNotifyJson << std::endl;
 
-    return objNotifyParam.m_s32Ret ;
+    return oNotifyParam.m_s32Ret ;
 }
 
 NotifyParam PluginConfig::getAll()
@@ -513,13 +513,13 @@ NotifyParam PluginConfig::fillEmptyRoot()
     return objNotifyParam ;
 }
 
-std::string PluginConfig::makeNotifyJson( NotifyParam &objNotifyParam )
+std::string PluginConfig::makeNotifyJson( NotifyParam &oNotifyParam )
 {
 
     JsonWrapper oJsonWrapper;
-    oJsonWrapper.addItemToObject( "result" ,  objNotifyParam.m_s32Ret );
-    oJsonWrapper.addItemToObject( "sucess_notify" , objNotifyParam.m_stSuccessInfo );
-    oJsonWrapper.addItemToObject( "error_notify" ,  objNotifyParam.m_eErrorCode );
+    oJsonWrapper.addItemToObject( "result" ,  oNotifyParam.m_s32Ret );
+    oJsonWrapper.addItemToObject( "sucess_notify" , oNotifyParam.m_stSuccessInfo );
+    oJsonWrapper.addItemToObject( "error_notify" ,  oNotifyParam.m_eErrorCode );
 
     return oJsonWrapper.toString() ;
 }

@@ -20,12 +20,12 @@ public:
         QString stData = "{\"data1\":\"pw\"}";
         Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_INIT , stData );
         Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ , stData );
-        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_CLOSE , stData );
         // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_WRITE , stData );
-        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON , stData );
-        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON_ALL , stData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON , stData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON_ALL , stData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_RESET , stData );
         // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_CLOSE , stData );
-        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_RESET , stData );
+
         
     }
 

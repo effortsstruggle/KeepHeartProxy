@@ -16,16 +16,21 @@ JsonWrapper::JsonWrapper( const std::string &stJson )
 }
 
 JsonWrapper::JsonWrapper(JsonWrapper&& other) noexcept : 
-    m_pRoot (other.m_pRoot) {
+    m_pRoot (other.m_pRoot) 
+{
+        std::cout << "  JsonWrapper::JsonWrapper( 1 ) " << std::endl;
     other.m_pRoot = nullptr;
+    std::cout << "  JsonWrapper::JsonWrapper( 2 ) " << std::endl;
 }
 
 JsonWrapper& JsonWrapper::operator=(JsonWrapper&& other) noexcept {
+    std::cout << "  JsonWrapper::operator=( 1 ) " << std::endl;
     if (this != &other) {
         this->clear();
         this->m_pRoot = other.m_pRoot;
         other.m_pRoot = nullptr;
     }
+    std::cout << "  JsonWrapper::operator=( 2 ) " << std::endl;
     return *this;
 }
 
@@ -44,6 +49,18 @@ void JsonWrapper::parse(const std::string& stJson) {
     if (nullptr == this->m_pRoot ) {
         throw std::runtime_error( ::cJSON_GetErrorPtr() );
     }
+}
+
+// 解析 JSON 字符串
+void JsonWrapper::reset() {
+    if ( nullptr != this->m_pRoot ) {
+
+        ::cJSON_Delete( this->m_pRoot );
+        this->m_pRoot = nullptr;
+        this->m_pRoot = ::cJSON_CreateObject() ;
+        
+    }
+   
 }
 
 
@@ -190,6 +207,7 @@ void JsonWrapper::clear()
         ::cJSON_Delete( this->m_pRoot );
         this->m_pRoot = nullptr;
     }
+
 }
 
 // 类型检查方法
