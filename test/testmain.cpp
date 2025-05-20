@@ -3,6 +3,7 @@
 #include <Singleton/singleton.h>
 #include <unistd.h>
 #include "CmdDef.h"
+#include <Sonic/sonic/sonic.h>
 
 
 class TestKeepHeartProxy :public QObject
@@ -16,15 +17,36 @@ public:
         QObject::connect( Singleton_KeepHeartProxy::getInstance() ,  &KeepHeartProxy::pluginNotify , this, &TestKeepHeartProxy::onPluginNotify , Qt::DirectConnection);
         QObject::connect( Singleton_KeepHeartProxy::getInstance() ,  &KeepHeartProxy::pluginNotifyAsyn , this, &TestKeepHeartProxy::onPluginNotifyAsyn , Qt::DirectConnection);
 
+        
+        QString stReadData = R"({
+            "data1": "pw"
+        })";
+        QString stWriteData = R"({
+            "data1": { "key":"pw", "value":"wangqin" }
+        })";
 
-        QString stData = "{\"data1\":\"pw\"}";
-        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_INIT , stData );
-        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ , stData );
-        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_WRITE , stData );
-        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON , stData );
-        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON_ALL , stData );
-        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_RESET , stData );
-        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_CLOSE , stData );
+        QString stWriteObjData = R"({
+            "data1": { "key":"abc", "value": { "test" : "hahahaha" }}
+        })";
+
+        QString stWriteObjData_2 = R"({
+            "data1": { "key":"abc_2", "value": { "test_2" : "haha_2" }}
+        })";
+
+        QString stWriteArrData = R"({
+            "data1": { "key":"kkk", "value": [1,2,3] } 
+        })";
+
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_INIT , "" );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ , stReadData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_WRITE , stWriteData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_WRITE , stWriteObjData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_WRITE , stWriteObjData_2 );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_WRITE , stWriteArrData );
+        // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON , stData );
+        Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_READ_JSON_ALL , "" );
+        // // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_RESET , stData );
+        // // Singleton_KeepHeartProxy::getInstance()->pluginsExecuteAsync( this->m_s32PluginConfigId , CFG_CLOSE , stData );
 
         
     }
@@ -125,7 +147,7 @@ int main(int argc, char *argv[])
 {
     Singleton_TestKeepHeartProxy::getInstance() ; // ->emitTestSignal();
 
-    usleep( 5 * 1000 );
+    usleep( 100 * 1000 );
     std::cout << "-------------------end---------------------------" << std::endl;
     return 0;
 }

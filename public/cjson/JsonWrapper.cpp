@@ -89,7 +89,7 @@ JsonWrapper JsonWrapper::getArrayItem(size_t index) const {
 
 
 std::string JsonWrapper::getString(const std::string& key) const {
-    this->validateNode("get() on non-object");
+    this->validateNode("getString() on non-object");
     cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
     if ( nullptr == child) {
         throw std::runtime_error("Key not found: " + key);
@@ -98,7 +98,7 @@ std::string JsonWrapper::getString(const std::string& key) const {
 }
 
 bool JsonWrapper::getBool(const std::string& key) const {
-    this->validateNode("get() on non-object");
+    this->validateNode("getBool() on non-object");
     cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
     if ( nullptr == child) {
         throw std::runtime_error("Key not found: " + key);
@@ -108,7 +108,7 @@ bool JsonWrapper::getBool(const std::string& key) const {
 
 
 int JsonWrapper::getInt(const std::string& key) const {
-    this->validateNode("get() on non-object");
+    this->validateNode("getInt() on non-object");
     cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
     if ( nullptr == child) {
         throw std::runtime_error("Key not found: " + key);
@@ -117,7 +117,7 @@ int JsonWrapper::getInt(const std::string& key) const {
 }
 
 double JsonWrapper::getDouble(const std::string& key) const {
-    this->validateNode("get() on non-object");
+    this->validateNode("getDouble() on non-object");
     cJSON* child = ::cJSON_GetObjectItem( this->m_pRoot , key.c_str() ) ;
     if ( nullptr == child) {
         throw std::runtime_error("Key not found: " + key);

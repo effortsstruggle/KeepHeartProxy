@@ -13,7 +13,8 @@ string(ASCII 27 Esc)
 
 set(CMAKE_CXX_STANDARD 11)
 #编译参数
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -O1 -s")
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -O1 -s -march=native")
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -g -Wall -O1 -s")
 # 全局的宏定义
 set(PUSH_REMOTE 0)  #   1 0 # 是否推送到远程，不管启动与否都会推送到打包目录

@@ -23,7 +23,10 @@ enum NotifyErrorCode
 {
     eNullPointerError = 0x0000, 
     eWriteFileError ,
+    eOpenFileError ,
     eTypeError , 
+    eJsonParseError , 
+    eJsonKeyNoExist ,
     eInvialdError = 0xFFFF ,
 };
 

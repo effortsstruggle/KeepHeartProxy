@@ -22,7 +22,6 @@ add_definitions(-DUSE_LOGCAT)
 include_directories (
   ${PROJECT_SOURCE_DIR}/dsrc
   ${PROJECT_SOURCE_DIR}/public/utils
-  ${PROJECT_SOURCE_DIR}/public/cjson
 )
 
 file( GLOB SRC *.cpp *.c )
@@ -34,7 +33,7 @@ link_directories(
 
 add_executable( ${LIB_NAME} ${SRC} )
 target_link_libraries(${LIB_NAME} Qt5::Core  Qt5::Qml Qt5::Quick)
-target_link_libraries(${LIB_NAME} -lKeepHeartProxy -lutils -lcjson -lpthread )
+target_link_libraries(${LIB_NAME} -lKeepHeartProxy -lutils -lpthread )
 
 
 if( ${PUSH_REMOTE} EQUAL 1)

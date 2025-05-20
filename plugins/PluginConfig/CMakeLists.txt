@@ -9,7 +9,6 @@ add_definitions(-DUSE_LOGCAT)
 # 程序所引用的头文件库目录。
 include_directories(    
     ${CMAKE_CURRENT_SOURCE_DIR}	# 当前工程的文件路径。如果需要其他库，要继续写所需要库的路径。
-    ${PROJECT_SOURCE_DIR}/public/cjson
     ${PROJECT_SOURCE_DIR}/public/utils
 )
 

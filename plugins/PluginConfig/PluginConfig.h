@@ -9,9 +9,8 @@
 #include "PluginInterface.h"
 #include <Singleton/singleton.h>
 #include <Async/AsyncCall.h>
+#include <Sonic/sonic/sonic.h>
 
-
-class JsonWrapper ;
 class PluginConfig :public PluginInterface
 {
 public:
@@ -92,7 +91,7 @@ private:
 
 private:
 
-    JsonWrapper *m_pJsonWrapper ; 
+    sonic_json::Document m_oJsonDoc;
     AsyncCall *m_pAsyncCall ;
     std::string m_stCfgPath;
 };
@@ -109,3 +108,43 @@ extern "C" PluginInterface* createPlugin() ;
 extern "C" void destroyPlugin(PluginInterface* plugin) {
     // Singleton_PluginConfig::destroy();
 }
+
+
+
+
+
+
+
+
+
+//  // 创建 Document（根节点为对象）
+//     sonic::json::Document doc;
+
+//     // 添加基本字段
+//     doc["user_id"] = 1001;
+//     doc["username"] = "alice_123";
+//     doc["is_vip"] = true;
+
+//     // 嵌套对象：地址信息
+//     sonic::json::Document address;
+//     address["city"] = "Shanghai";
+//     address["district"] = "Pudong";
+//     address["coordinates"] = {31.2304, 121.4737};  // 数组
+//     doc["address"] = address;
+
+//     // 数组：用户标签
+//     doc["tags"] = {"new_user", "vip", "active"};
+
+//     // 数组中的对象：订单列表
+//     sonic::json::Document orders;
+//     for (int i = 0; i < 2; ++i) {
+//         sonic::json::Document order;
+//         order["order_id"] = 10000 + i;
+//         order["amount"] = 99.9 * (i + 1);
+//         orders.PushBack(order);
+//     }
+//     doc["orders"] = orders;
+
+//     // 序列化为格式化 JSON 字符串
+//     std::string json_str = doc.to_string(2);
+//     std::cout << "Generated JSON:\n" << json_str << std::endl;
