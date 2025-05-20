@@ -220,7 +220,6 @@ int PluginConfig::asyncInit( FuncAndParam const &param )
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_INIT , stNotifyJson );
 
-    std::cout << "PluginConfig::asyncInit()  Generated JSON: " << stNotifyJson << std::endl;
 
     return oNotifyParam.m_s32Ret ; 
 }
@@ -278,9 +277,6 @@ int PluginConfig::asyncRead( FuncAndParam const &param )
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ , stNotifyJson );
 
-    std::cout << "PluginConfig::asyncRead()  Generated JSON: " << stNotifyJson << std::endl;
-
-
     return oNotifyParam.m_s32Ret ; 
 
 }
@@ -289,6 +285,7 @@ NotifyParam PluginConfig::read(std::string stData )
 {
     std::cout << " PluginConfig::read -> data : " << stData <<std::endl ;
     NotifyParam oNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
+
 
     auto m = this->m_oJsonDoc.FindMember( stData );   
     if (m != this->m_oJsonDoc.MemberEnd()) {
@@ -301,15 +298,78 @@ NotifyParam PluginConfig::read(std::string stData )
             std::cout << "Incoreect key type!" << std::endl;
         }
 
+
+        sonic_json::Document oDoc ;
+        oDoc.SetObject();
+
+    
+  
         if (value.IsString()) {
-            oNotifyParam.m_stSuccessInfo = value.GetString() ;
+
+            sonic_json::Node typeNode( sonic_json::kSint );
+            typeNode.SetInt64( 1 );
+
+            sonic_json::Node valueNode( sonic_json::kString );
+            valueNode.SetString( value.GetString(), oDoc.GetAllocator());
+    
+            oDoc.AddMember( sonic_json::StringView( "type" ) ,  std::move(typeNode) , oDoc.GetAllocator());
+            oDoc.AddMember( sonic_json::StringView( "value" ) ,  std::move(valueNode) , oDoc.GetAllocator());
+
         }else if( value.IsInt64() ) {
-            oNotifyParam.m_stSuccessInfo = value.GetInt64() ;
+
+            sonic_json::Node typeNode( sonic_json::kSint );
+            typeNode.SetInt64( 2 );
+
+            sonic_json::Node valueNode( sonic_json::kSint );
+            valueNode.SetInt64( value.GetInt64() ) ;
+    
+            oDoc.AddMember( sonic_json::StringView( "type" ) ,  std::move(typeNode) , oDoc.GetAllocator());
+            oDoc.AddMember( sonic_json::StringView( "value" ) ,  std::move(valueNode) , oDoc.GetAllocator());
+
         }else if( value.IsDouble() ) {
-            oNotifyParam.m_stSuccessInfo = value.GetDouble() ;
+
+            sonic_json::Node typeNode( sonic_json::kSint );
+            typeNode.SetInt64( 3 );
+
+            sonic_json::Node valueNode( sonic_json::kReal );
+            valueNode.SetDouble( value.GetDouble() ) ;
+    
+            oDoc.AddMember( sonic_json::StringView( "type" ) ,  std::move(typeNode) , oDoc.GetAllocator());
+            oDoc.AddMember( sonic_json::StringView( "value" ) ,  std::move(valueNode) , oDoc.GetAllocator());
+
+        }else if( value.IsObject() ){
+            
+            sonic_json::Node typeNode( sonic_json::kSint );
+            typeNode.SetInt64( 4 );
+
+            sonic_json::Node valueNode ;
+            valueNode.CopyFrom( value , oDoc.GetAllocator());
+
+            oDoc.AddMember( sonic_json::StringView( "type" ) ,  std::move(typeNode) , oDoc.GetAllocator());
+            oDoc.AddMember( sonic_json::StringView( "value" ) ,  std::move(valueNode) , oDoc.GetAllocator());
+
+
+        }else if( value.IsArray() ){
+
+            sonic_json::Node typeNode( sonic_json::kSint );
+            typeNode.SetInt64( 5 );
+
+            sonic_json::Node valueNode ;
+            valueNode.CopyFrom( value , oDoc.GetAllocator());
+
+            oDoc.AddMember( sonic_json::StringView( "type" ) ,  std::move(typeNode) , oDoc.GetAllocator());
+            oDoc.AddMember( sonic_json::StringView( "value" ) ,  std::move(valueNode) , oDoc.GetAllocator());
+
+
+
         }else {
             std::cout << "Incoreect value type!" << std::endl;
         }
+        
+        sonic_json::WriteBuffer oWb;
+        oDoc.Serialize( oWb );
+        oNotifyParam.m_stSuccessInfo = oWb.ToString();
+
 
     } else {
         std::cout << "Find key doesn't exist!" << std::endl;
@@ -332,14 +392,12 @@ int PluginConfig::asyncWrite( FuncAndParam const &param )
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_WRITE , stNotifyJson );
 
-    std::cout << "PluginConfig::asyncWrite()  Generated JSON: " << stNotifyJson << std::endl;
-
     return objNotifyParam.m_s32Ret ; 
 }
 
 NotifyParam PluginConfig::write(std::string stData)
 {
-    std::cout << " PluginConfig::write -> data : " << stData << " thread_id : " << std::this_thread::get_id() <<std::endl ;
+    std::cout << " PluginConfig::write -> data : " << stData <<std::endl ;
 
     NotifyParam oNotifyParam = { 0 , "" , NotifyErrorCode::eInvialdError }; 
     std::string stKey = "" ;
@@ -450,8 +508,6 @@ int PluginConfig::asyncReset( FuncAndParam const &param )
     stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( objNotifyParam );
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_RESET , stNotifyJson );
-    std::cout << "PluginConfig::asyncReset()  Generated JSON: " << stNotifyJson << std::endl;
-
 
     return objNotifyParam.m_s32Ret ; 
 }
@@ -489,7 +545,6 @@ int PluginConfig::asyncClose( FuncAndParam const &param )
     stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( oNotifyParam );
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_CLOSE , stNotifyJson );
-    std::cout << "PluginConfig::asyncClose()  Generated JSON: " << stNotifyJson << std::endl;
 
     return oNotifyParam.m_s32Ret ; 
 }
@@ -513,7 +568,6 @@ int PluginConfig::asyncGetJson( FuncAndParam const &param )
     stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( oNotifyParam );
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ_JSON , stNotifyJson );
-    std::cout << "PluginConfig::asyncGetJson()  Generated JSON: " << stNotifyJson << std::endl;
 
     return oNotifyParam.m_s32Ret ; 
 }
@@ -537,7 +591,6 @@ int PluginConfig::asyncGetAll( FuncAndParam const &param )
     stNotifyJson = Singleton_PluginConfig::getInstance()->makeNotifyJson( oNotifyParam );
     // notify
     Singleton_PluginConfig::getInstance()->NotifyAsyn( PluginConfig::CFG_READ_JSON_ALL , stNotifyJson );
-    std::cout << "PluginConfig::asyncGetAll()  Generated JSON: " << stNotifyJson << std::endl;
 
     return oNotifyParam.m_s32Ret ;
 }
@@ -561,7 +614,7 @@ NotifyParam PluginConfig::sync()
     //data
     sonic_json::WriteBuffer oWb;
     this->m_oJsonDoc.Serialize( oWb );
-    std::string stConnect = oWb.ToString();
+    std::string stContent = oWb.ToString();
 
     //覆盖写入（默认模式）​
     std::ofstream ofs( this->m_stCfgPath );
@@ -571,9 +624,12 @@ NotifyParam PluginConfig::sync()
         std::cout << "Failed to open file for writing!" << std::endl;
         return objNotifyParam;
     }
-    ofs << stConnect ;
+    ofs << stContent ;
     // 显式关闭文件（可选）
     ofs.close();
+
+    //success 
+    objNotifyParam.m_stSuccessInfo = stContent ;
 
     return objNotifyParam ;
 }
