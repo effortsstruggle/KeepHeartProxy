@@ -77,7 +77,7 @@ protected:
   static int asyncGetAll(FuncAndParam const &param );
   NotifyParam getAll();
 
-  
+
 
 private:
   /**

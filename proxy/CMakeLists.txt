@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 set(LIB_NAME "KeepHeartProxy")
-set(LIB_DIR "dsrc")
+set(LIB_DIR "proxy")
 
 set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_AUTOUIC ON)

@@ -62,6 +62,6 @@ include_directories (
 
 # 不需要编译的就注释，不参与编译
 add_subdirectory(public)
+add_subdirectory(proxy)
 add_subdirectory(plugins)
-add_subdirectory(dsrc)
 add_subdirectory(test)

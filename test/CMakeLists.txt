@@ -20,7 +20,7 @@ add_definitions(-DUSE_LOGCAT)
 
 # 头文件
 include_directories (
-  ${PROJECT_SOURCE_DIR}/dsrc
+  ${PROJECT_SOURCE_DIR}/proxy
   ${PROJECT_SOURCE_DIR}/public/utils
 )
 
